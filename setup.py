@@ -21,8 +21,10 @@ if sys.platform == "win32":
     # their LZO source installation.  The path set here is just an example
     # and thus unlikely to match your installation.
     LZO_DIR = r"c:\src\lzo-1.08"
-    include_dirs.append(os.path.join(CURL_DIR, "include"))
-    extra_objects.append(os.path.join(CURL_DIR, "lzo.lib"))
+    if not os.path.exists(LZO_DIR):
+        raise Exception("please set LZO_DIR to where the lzo source lives")
+    include_dirs.append(os.path.join(LZO_DIR, "include"))
+    extra_objects.append(os.path.join(LZO_DIR, "lzo.lib"))
 else:
     libraries = ["lzo2"]
     include_dirs.append("/usr/include/lzo")
