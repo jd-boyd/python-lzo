@@ -39,9 +39,9 @@ sys.path = get_sys_path()
 import lzo
 
 
-# /***********************************************************************
-# // a very simple test driver...
-# ************************************************************************/
+# ***********************************************************************
+#  a very simple test driver...
+# ***********************************************************************
 
 def print_modinfo():
     #print sys.modules
@@ -90,13 +90,11 @@ def main(args):
     assert issubclass(lzo.error, Exception)
     try:
         x = lzo.decompress("xx")
-    except lzo.error, ex:
-        ## print ex
+    except lzo.error:
         pass
     else:
         print "Exception handling does NOT work !"
     return 0
-
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
