@@ -80,7 +80,7 @@ compress(PyObject *dummy, PyObject *args)
     if (len < 0)
         return NULL;
     in_len = len;
-    out_len = in_len + in_len / 64 + 16 + 3;
+    out_len = in_len + in_len / 16 + 64 + 3;
 
     /* alloc buffers */
     result_str = PyString_FromStringAndSize(NULL, 5 + out_len);
