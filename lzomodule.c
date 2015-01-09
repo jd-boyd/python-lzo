@@ -168,7 +168,7 @@ decompress(PyObject *dummy, PyObject *args)
         goto header_error;
     in_len = len - 5;
     out_len = (in[1] << 24) | (in[2] << 16) | (in[3] << 8) | in[4];
-    if ((int)out_len < 0 || in_len > out_len + out_len / 64 + 16 + 3)
+    if ((int)out_len < 0 || in_len > out_len + out_len / 16 + 64 + 3)
         goto header_error;
 
     /* alloc buffers */
@@ -224,7 +224,7 @@ optimize(PyObject *dummy, PyObject *args)
         goto header_error;
     in_len = len - 5;
     out_len = (in[1] << 24) | (in[2] << 16) | (in[3] << 8) | in[4];
-    if ((int)out_len < 0 || in_len > out_len + out_len / 64 + 16 + 3)
+    if ((int)out_len < 0 || in_len > out_len + out_len / 16 + 64 + 3)
         goto header_error;
 
     /* alloc buffers */
