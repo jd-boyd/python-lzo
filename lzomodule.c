@@ -51,6 +51,9 @@
 #  error "Need LZO version 1.07 or greater"
 #endif
 
+
+
+
 #undef UNUSED
 #define UNUSED(var)     ((void)&var)
 
@@ -92,7 +95,11 @@ compress(PyObject *dummy, PyObject *args)
     out_len = in_len + in_len / 16 + 64 + 3;
 
     /* alloc buffers */
+#if PY_MAJOR_VERSION >= 3
+    result_str = PyBytes_FromStringAndSize(NULL, 5 + out_len);
+#else
     result_str = PyString_FromStringAndSize(NULL, 5 + out_len);
+#endif
     if (result_str == NULL)
         return PyErr_NoMemory();
     if (level == 1)
@@ -106,7 +113,11 @@ compress(PyObject *dummy, PyObject *args)
     }
 
     /* compress */
+#if PY_MAJOR_VERSION >= 3
+    out = (lzo_bytep) PyBytes_AsString(result_str);
+#else
     out = (lzo_bytep) PyString_AsString(result_str);
+#endif
     new_len = out_len;
     if (level == 1)
     {
@@ -135,7 +146,11 @@ compress(PyObject *dummy, PyObject *args)
 
     /* return */
     if (new_len != out_len)
+#if PY_MAJOR_VERSION >= 3
+        _PyBytes_Resize(&result_str, 5 + new_len);
+#else
         _PyString_Resize(&result_str, 5 + new_len);
+#endif
     return result_str;
 }
 
@@ -172,12 +187,20 @@ decompress(PyObject *dummy, PyObject *args)
         goto header_error;
 
     /* alloc buffers */
+#if PY_MAJOR_VERSION >= 3
+    result_str = PyBytes_FromStringAndSize(NULL, out_len);
+#else
     result_str = PyString_FromStringAndSize(NULL, out_len);
+#endif
     if (result_str == NULL)
         return PyErr_NoMemory();
 
     /* decompress */
+#if PY_MAJOR_VERSION >= 3
+    out = (lzo_bytep) PyBytes_AsString(result_str);
+#else
     out = (lzo_bytep) PyString_AsString(result_str);
+#endif
     new_len = out_len;
     err = lzo1x_decompress_safe(in+5, in_len, out, &new_len, NULL);
     if (err != LZO_E_OK || new_len != out_len)
@@ -228,7 +251,11 @@ optimize(PyObject *dummy, PyObject *args)
         goto header_error;
 
     /* alloc buffers */
+#if PY_MAJOR_VERSION >= 3
+    result_str = PyBytes_FromStringAndSize(in, len);
+#else
     result_str = PyString_FromStringAndSize(in, len);
+#endif
     if (result_str == NULL)
         return PyErr_NoMemory();
     out = (lzo_bytep) PyMem_Malloc(out_len > 0 ? out_len : 1);
@@ -239,7 +266,11 @@ optimize(PyObject *dummy, PyObject *args)
     }
 
     /* optimize */
+#if PY_MAJOR_VERSION >= 3
+    in = (lzo_bytep) PyBytes_AsString(result_str);
+#else
     in = (lzo_bytep) PyString_AsString(result_str);
+#endif
     new_len = out_len;
     err = lzo1x_optimize(in+5, in_len, out, &new_len, NULL);
     PyMem_Free(out);
@@ -282,7 +313,11 @@ adler32(PyObject *dummy, PyObject *args)
         return NULL;
     if (len > 0)
         val = lzo_adler32((lzo_uint32)val, (const lzo_bytep)buf, len);
+#if PY_MAJOR_VERSION >= 3
+    return PyLong_FromLong(val);
+#else
     return PyInt_FromLong(val);
+#endif
 }
 
 
@@ -309,7 +344,11 @@ crc32(PyObject *dummy, PyObject *args)
         return NULL;
     if (len > 0)
         val = lzo_crc32((lzo_uint32)val, (const lzo_bytep)buf, len);
+#if PY_MAJOR_VERSION >= 3
+    return PyLong_FromLong(val);
+#else
     return PyInt_FromLong(val);
+#endif
 }
 
 
@@ -384,19 +423,40 @@ void initlzo(void)
     LzoError = PyErr_NewException("lzo.error", NULL, NULL);
     PyDict_SetItemString(d, "error", LzoError);
 
+#if PY_MAJOR_VERSION >= 3
+    v = PyBytes_FromString("Markus F.X.J. Oberhumer <markus@oberhumer.com>");
+#else
     v = PyString_FromString("Markus F.X.J. Oberhumer <markus@oberhumer.com>");
+#endif
+
     PyDict_SetItemString(d, "__author__", v);
     Py_DECREF(v);
+#if PY_MAJOR_VERSION >= 3
+    v = PyBytes_FromString(MODULE_VERSION);
+#else
     v = PyString_FromString(MODULE_VERSION);
+#endif
     PyDict_SetItemString(d, "__version__", v);
     Py_DECREF(v);
+#if PY_MAJOR_VERSION >= 3
+    v = PyLong_FromLong((long)lzo_version());
+#else
     v = PyInt_FromLong((long)lzo_version());
+#endif
     PyDict_SetItemString(d, "LZO_VERSION", v);
     Py_DECREF(v);
+#if PY_MAJOR_VERSION >= 3
+    v = PyBytes_FromString(lzo_version_string());
+#else
     v = PyString_FromString(lzo_version_string());
+#endif
     PyDict_SetItemString(d, "LZO_VERSION_STRING", v);
     Py_DECREF(v);
+#if PY_MAJOR_VERSION >= 3
+    v = PyBytes_FromString(lzo_version_date());
+#else
     v = PyString_FromString(lzo_version_date());
+#endif
     PyDict_SetItemString(d, "LZO_VERSION_DATE", v);
     Py_DECREF(v);
 
