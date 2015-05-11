@@ -53,10 +53,10 @@ static PyObject *LzoError;
 ************************************************************************/
 
 static /* const */ char compress__doc__[] =
-"compress(string) -- Compress string using the default compression level, "
-"returning a string containing compressed data.\n"
-"compress(string, level) -- Compress string, using the chosen compression "
-"level (either 1 or 9).  Return a string containing the compressed data.\n"
+"compress(string_or_bytes) -- Compress string or bytes using the default compression level, "
+"returning a bytes containing compressed data.\n"
+"compress(string_or_bytes, level) -- Compress string or bytes, using the chosen compression "
+"level (either 1 or 9).  Return a bytes containing the compressed data.\n"
 ;
 
 static PyObject *
@@ -83,7 +83,7 @@ compress(PyObject *dummy, PyObject *args)
     out_len = in_len + in_len / 64 + 16 + 3;
 
     /* alloc buffers */
-    result_str = PyString_FromStringAndSize(NULL, 5 + out_len);
+    result_str = PyBytes_FromStringAndSize(NULL, 5 + out_len);
     if (result_str == NULL)
         return PyErr_NoMemory();
     if (level == 1)
@@ -97,7 +97,7 @@ compress(PyObject *dummy, PyObject *args)
     }
 
     /* compress */
-    out = (lzo_bytep) PyString_AsString(result_str);
+    out = (lzo_bytep) PyBytes_AsString(result_str);
     new_len = out_len;
     if (level == 1)
     {
@@ -126,7 +126,7 @@ compress(PyObject *dummy, PyObject *args)
 
     /* return */
     if (new_len != out_len)
-        _PyString_Resize(&result_str, 5 + new_len);
+        _PyBytes_Resize(&result_str, 5 + new_len);
     return result_str;
 }
 
@@ -136,7 +136,7 @@ compress(PyObject *dummy, PyObject *args)
 ************************************************************************/
 
 static /* const */ char decompress__doc__[] =
-"decompress(string) -- Decompress the data in string, returning a string containing the decompressed data.\n"
+"decompress(bytes) -- Decompress the data in bytes, returning a bytes containing the decompressed data.\n"
 ;
 
 static PyObject *
@@ -163,12 +163,12 @@ decompress(PyObject *dummy, PyObject *args)
         goto header_error;
 
     /* alloc buffers */
-    result_str = PyString_FromStringAndSize(NULL, out_len);
+    result_str = PyBytes_FromStringAndSize(NULL, out_len);
     if (result_str == NULL)
         return PyErr_NoMemory();
 
     /* decompress */
-    out = (lzo_bytep) PyString_AsString(result_str);
+    out = (lzo_bytep) PyBytes_AsString(result_str);
     new_len = out_len;
     err = lzo1x_decompress_safe(in+5, in_len, out, &new_len, NULL);
     if (err != LZO_E_OK || new_len != out_len)
@@ -192,7 +192,7 @@ header_error:
 ************************************************************************/
 
 static /* const */ char optimize__doc__[] =
-"optimize(string) -- Optimize the representation of the compressed data, returning a string containing the compressed data.\n"
+"optimize(bytes) -- Optimize the representation of the compressed data, returning a bytes containing the compressed data.\n"
 ;
 
 static PyObject *
@@ -219,7 +219,7 @@ optimize(PyObject *dummy, PyObject *args)
         goto header_error;
 
     /* alloc buffers */
-    result_str = PyString_FromStringAndSize(in, len);
+    result_str = PyBytes_FromStringAndSize(in, len);
     if (result_str == NULL)
         return PyErr_NoMemory();
     out = (lzo_bytep) PyMem_Malloc(out_len > 0 ? out_len : 1);
@@ -230,7 +230,7 @@ optimize(PyObject *dummy, PyObject *args)
     }
 
     /* optimize */
-    in = (lzo_bytep) PyString_AsString(result_str);
+    in = (lzo_bytep) PyBytes_AsString(result_str);
     new_len = out_len;
     err = lzo1x_optimize(in+5, in_len, out, &new_len, NULL);
     PyMem_Free(out);
@@ -255,9 +255,9 @@ header_error:
 ************************************************************************/
 
 static /* const */ char adler32__doc__[] =
-"adler32(string) -- Compute an Adler-32 checksum of string, using "
+"adler32(string_or_bytes) -- Compute an Adler-32 checksum of string or bytes, using "
 "a default starting value, and returning an integer value.\n"
-"adler32(string, value) -- Compute an Adler-32 checksum of string, using "
+"adler32(string_or_bytes, value) -- Compute an Adler-32 checksum of string or bytes, using "
 "the starting value provided, and returning an integer value\n"
 ;
 
@@ -273,7 +273,7 @@ adler32(PyObject *dummy, PyObject *args)
         return NULL;
     if (len > 0)
         val = lzo_adler32((lzo_uint32)val, (const lzo_bytep)buf, len);
-    return PyInt_FromLong(val);
+    return PyLong_FromLong(val);
 }
 
 
@@ -282,9 +282,9 @@ adler32(PyObject *dummy, PyObject *args)
 ************************************************************************/
 
 static /* const */ char crc32__doc__[] =
-"crc32(string) -- Compute a CRC-32 checksum of string, using "
+"crc32(string_or_bytes) -- Compute a CRC-32 checksum of string or bytes, using "
 "a default starting value, and returning an integer value.\n"
-"crc32(string, value) -- Compute a CRC-32 checksum of string, using "
+"crc32(string_or_bytes, value) -- Compute a CRC-32 checksum of string or bytes, using "
 "the starting value provided, and returning an integer value.\n"
 ;
 
@@ -300,7 +300,7 @@ crc32(PyObject *dummy, PyObject *args)
         return NULL;
     if (len > 0)
         val = lzo_crc32((lzo_uint32)val, (const lzo_bytep)buf, len);
-    return PyInt_FromLong(val);
+    return PyLong_FromLong(val);
 }
 
 
@@ -322,49 +322,58 @@ static /* const */ PyMethodDef methods[] =
 static /* const */ char module_documentation[]=
 "The functions in this module allow compression and decompression "
 "using the LZO library.\n\n"
-"adler32(string) -- Compute an Adler-32 checksum.\n"
-"adler32(string, start) -- Compute an Adler-32 checksum using a given starting value.\n"
-"compress(string) -- Compress a string.\n"
-"compress(string, level) -- Compress a string with the given level of compression (either 1 or 9).\n"
-"crc32(string) -- Compute a CRC-32 checksum.\n"
-"crc32(string, start) -- Compute a CRC-32 checksum using a given starting value.\n"
-"decompress(string) -- Decompresses a compressed string.\n"
-"optimize(string) -- Optimize a compressed string.\n"
+"adler32(string_or_bytes) -- Compute an Adler-32 checksum.\n"
+"adler32(string_or_bytes, start) -- Compute an Adler-32 checksum using a given starting value.\n"
+"compress(string_or_bytes) -- Compress a string or bytes.\n"
+"compress(string_or_bytes, level) -- Compress a string or bytes with the given level of compression (either 1 or 9).\n"
+"crc32(string_or_bytes) -- Compute a CRC-32 checksum.\n"
+"crc32(string_or_bytes, start) -- Compute a CRC-32 checksum using a given starting value.\n"
+"decompress(bytes) -- Decompresses a compressed bytes.\n"
+"optimize(bytes) -- Optimize a compressed bytes.\n"
 ;
+
+
+static /* const */ PyModuleDef lzomodule = {
+    PyModuleDef_HEAD_INIT,
+    "lzo",
+    module_documentation,
+    -1,
+    methods
+};
 
 
 #ifdef _MSC_VER
 _declspec(dllexport)
 #endif
-void initlzo(void)
+PyObject* PyInit_lzo(void)
 {
     PyObject *m, *d, *v;
 
     if (lzo_init() != LZO_E_OK)
         return;
 
-    m = Py_InitModule4("lzo", methods, module_documentation,
-                       NULL, PYTHON_API_VERSION);
+    m = PyModule_Create2(&lzomodule, PYTHON_API_VERSION);
     d = PyModule_GetDict(m);
 
     LzoError = PyErr_NewException("lzo.error", NULL, NULL);
     PyDict_SetItemString(d, "error", LzoError);
 
-    v = PyString_FromString("Markus F.X.J. Oberhumer <markus@oberhumer.com>");
+    v = PyBytes_FromString("Markus F.X.J. Oberhumer <markus@oberhumer.com>");
     PyDict_SetItemString(d, "__author__", v);
     Py_DECREF(v);
-    v = PyString_FromString(MODULE_VERSION);
+    v = PyBytes_FromString(MODULE_VERSION);
     PyDict_SetItemString(d, "__version__", v);
     Py_DECREF(v);
-    v = PyInt_FromLong((long)lzo_version());
+    v = PyLong_FromLong((long)lzo_version());
     PyDict_SetItemString(d, "LZO_VERSION", v);
     Py_DECREF(v);
-    v = PyString_FromString(lzo_version_string());
+    v = PyBytes_FromString(lzo_version_string());
     PyDict_SetItemString(d, "LZO_VERSION_STRING", v);
     Py_DECREF(v);
-    v = PyString_FromString(lzo_version_date());
+    v = PyBytes_FromString(lzo_version_date());
     PyDict_SetItemString(d, "LZO_VERSION_DATE", v);
     Py_DECREF(v);
+    return m;
 }
 
 
