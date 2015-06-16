@@ -81,5 +81,5 @@ this very high speed.""",
 if distutils.__version__ >= "1.0.2":
     setup_args["platforms"] = "All"
 
-apply(setup, (), setup_args)
+setup(**setup_args)
 

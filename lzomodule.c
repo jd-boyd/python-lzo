@@ -34,6 +34,15 @@
 #include <Python.h>
 #include <lzo1x.h>
 
+/* Python 2x3 compatible macros */
+#if PY_VERSION_HEX >= 0x03000000
+#  define PyInt_FromLong PyLong_FromLong
+#  define PyString_FromString PyBytes_FromString
+#  define PyString_FromStringAndSize PyBytes_FromStringAndSize
+#  define PyString_AsString PyBytes_AsString
+#  define _PyString_Resize _PyBytes_Resize
+#endif
+
 /* Ensure we have updated versions */
 #if !defined(PY_VERSION_HEX) || (PY_VERSION_HEX < 0x010502f0)
 #  error "Need Python version 1.5.2 or greater"
@@ -332,19 +341,44 @@ static /* const */ char module_documentation[]=
 "optimize(string) -- Optimize a compressed string.\n"
 ;
 
+#if PY_MAJOR_VERSION >= 3
+static PyModuleDef module = {
+    PyModuleDef_HEAD_INIT,
+    "lzo", /* name */
+    "Python bindings for the LZO data compression library", /* doc */
+    -1, /* size */
+    methods, /* methods */
+    NULL, /* reload */
+    NULL, /* traverse */
+    NULL, /* clear */
+    NULL, /* free */
+};
+#endif
 
 #ifdef _MSC_VER
 _declspec(dllexport)
 #endif
+#if PY_MAJOR_VERSION >= 3
+PyMODINIT_FUNC PyInit_lzo(void)
+#else
 void initlzo(void)
+#endif
 {
     PyObject *m, *d, *v;
 
     if (lzo_init() != LZO_E_OK)
+#if PY_MAJOR_VERSION >= 3
+        return NULL;
+#else
         return;
+#endif
 
+#if PY_MAJOR_VERSION >= 3
+    m = PyModule_Create(&module);
+#else
     m = Py_InitModule4("lzo", methods, module_documentation,
                        NULL, PYTHON_API_VERSION);
+#endif
     d = PyModule_GetDict(m);
 
     LzoError = PyErr_NewException("lzo.error", NULL, NULL);
@@ -365,6 +399,10 @@ void initlzo(void)
     v = PyString_FromString(lzo_version_date());
     PyDict_SetItemString(d, "LZO_VERSION_DATE", v);
     Py_DECREF(v);
+
+#if PY_MAJOR_VERSION >= 3
+    return m;
+#endif
 }
 
 
