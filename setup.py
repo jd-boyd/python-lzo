@@ -56,7 +56,7 @@ ext = Extension(
 
 setup_args = get_kw(
     name="python-lzo",
-    version="1.08",
+    version="1.09",
     description="Python bindings for the LZO data compression library",
     author="Markus F.X.J. Oberhumer",
     author_email="markus@oberhumer.com",
@@ -81,5 +81,5 @@ this very high speed.""",
 if distutils.__version__ >= "1.0.2":
     setup_args["platforms"] = "All"
 
-apply(setup, (), setup_args)
+setup(**setup_args)
 

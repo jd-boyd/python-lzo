@@ -30,6 +30,8 @@
 ##
 ##---------------------------------------------------------------------------##
 
+from __future__ import print_function
+
 import sys, string
 
 # update sys.path when running in the build directory
@@ -49,7 +51,7 @@ def print_modinfo():
     #print mod
     d = mod.__dict__
     for k in d.keys():
-        print k, d[k]
+        print(k, d[k])
 
 
 def test(src, level=1):
@@ -60,31 +62,33 @@ def test(src, level=1):
     o =  lzo.optimize(c)
     u2 = lzo.decompress(o)
     a2 = lzo.adler32(u2)
-    if src != u1 or src != u2:
-        raise lzo.error, "internal error 1"
+    if src != u1:
+        raise lzo.error("internal error 1: %r %r", src, u1)
+    if src != u2:
+        raise lzo.error("internal error 1: %r %r",  src, u2)
     if a0 != a1 or a0 != a2:
-        raise lzo.error, "internal error 2"
-    print "compressed %6d -> %6d" % (len(src), len(c))
+        raise lzo.error("internal error 2")
+    print("compressed %6d -> %6d" % (len(src), len(c)))
 
 
 def main(args):
     # display version information and module documentation
-    print "LZO version %s (0x%x), %s" % (lzo.LZO_VERSION_STRING, lzo.LZO_VERSION, lzo.LZO_VERSION_DATE)
-    print lzo.__file__
-    print
-    print lzo.__doc__
+    print("LZO version %s (0x%x), %s" % (lzo.LZO_VERSION_STRING, lzo.LZO_VERSION, lzo.LZO_VERSION_DATE))
+    print(lzo.__file__)
+    print()
+    print(lzo.__doc__)
 
     # display additional module information
     ## print dir(lzo)
     ## print_modinfo()
 
     # compress some simple strings
-    test("aaaaaaaaaaaaaaaaaaaaaaaa")
-    test("abcabcabcabcabcabcabcabc")
-    test("abcabcabcabcabcabcabcabc", level=9)
-    test(" " * 131072)
-    test("")
-    print "Simple compression test passed."
+    test(b"aaaaaaaaaaaaaaaaaaaaaaaa")
+    test(b"abcabcabcabcabcabcabcabc")
+    test(b"abcabcabcabcabcabcabcabc", level=9)
+    test(b" " * 131072)
+    test(b"")
+    print("Simple compression test passed.")
 
     # force an exception (because of invalid compressed data)
     assert issubclass(lzo.error, Exception)
@@ -93,7 +97,7 @@ def main(args):
     except lzo.error:
         pass
     else:
-        print "Exception handling does NOT work !"
+        print("Exception handling does NOT work !")
     return 0
 
 if __name__ == '__main__':
