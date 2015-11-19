@@ -6,7 +6,7 @@
               Copyright (c) 1996-2002 Markus F.X.J. Oberhumer
                           <markus@oberhumer.com>
                  http://www.oberhumer.com/opensource/lzo/
-              Copyright (c) 2011-2014 Joshua D. Boyd 		  
+              Copyright (c) 2011-2014 Joshua D. Boyd
                           <jdboyd@jdboyd.net>
                  https://github.com/jd-boyd/python-lzo
 ```
@@ -46,6 +46,10 @@ in the Python Reference Manual for more information.
 Additionally you should read the docs and study the example
 programs that ship with the LZO library. Really.
 
+# Notes
+
+The windows version is untested.  If you do test it, please let me
+know the results.
 
 # Copyright
 
@@ -59,4 +63,3 @@ Joshua D. Boyd <jdboyd@jdboyd.net>
 
 The LZO and Python-LZO algorithms and implementations are distributed under
 the terms of the GNU General Public License (GPL).  See the file COPYING.
-
