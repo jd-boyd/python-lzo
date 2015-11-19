@@ -88,7 +88,7 @@ def main(args):
     test(b"abcabcabcabcabcabcabcabc", level=9)
     test(b" " * 131072)
     test(b"")
-x    print("Simple compression test passed.")
+    print("Simple compression test passed.")
 
     # force an exception (because of invalid compressed data)
     assert issubclass(lzo.error, Exception)
