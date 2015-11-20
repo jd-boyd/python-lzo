@@ -71,6 +71,23 @@ def test(src, level=1):
     print("compressed %6d -> %6d" % (len(src), len(c)))
 
 
+def testRaw(src, level=1):
+    a0 = lzo.adler32(src)
+    c =  lzo.compress(src, level, False)
+    u1 = lzo.decompress(c, False, len(src))
+    a1 = lzo.adler32(u1)
+    o =  lzo.optimize(c, False, len(src))
+    u2 = lzo.decompress(o, False, len(src))
+    a2 = lzo.adler32(u2)
+    # make sure it still works when you overstate the output buffer length
+    u3 = lzo.decompress(c, False, len(src) + 100)
+    if src != u1 or src != u2 or src != u3:
+        raise lzo.error("internal error 1")
+    if a0 != a1 or a0 != a2:
+        raise lzo.error("internal error 2")
+    print("compressed %6d -> %6d" % (len(src), len(c)))
+
+
 def main(args):
     # display version information and module documentation
     print("LZO version %s (0x%x), %s" % (lzo.LZO_VERSION_STRING, lzo.LZO_VERSION, lzo.LZO_VERSION_DATE))
@@ -84,10 +101,15 @@ def main(args):
 
     # compress some simple strings
     test(b"aaaaaaaaaaaaaaaaaaaaaaaa")
+    testRaw(b"aaaaaaaaaaaaaaaaaaaaaaaa")
     test(b"abcabcabcabcabcabcabcabc")
+    testRaw(b"abcabcabcabcabcabcabcabc")
     test(b"abcabcabcabcabcabcabcabc", level=9)
+    testRaw(b"abcabcabcabcabcabcabcabc", level=9)
     test(b" " * 131072)
+    testRaw(b" " * 131072)
     test(b"")
+    testRaw(b"")
     print("Simple compression test passed.")
 
     # force an exception (because of invalid compressed data)
