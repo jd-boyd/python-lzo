@@ -2,6 +2,13 @@
 User visible changes for Python-LZO
 =======================================================================
 
+Changes in 1.10 (20 Jan 2016)
+  * Make Binary header metadata optional.
+
+Changes in 1.09 (19 Nov 2015)
+  * Add CI testing.
+  * Update with Python 3 support.
+
 Changes in 1.08 (17 Jul 2002)
   * build system updated to use distutils
   * all Python versions supported, tested with 1.5.2 up to 2.2.1
@@ -10,4 +17,3 @@ Changes in 1.08 (17 Jul 2002)
 
 Changes in 1.00 (21 Aug 1998)
   * first public release - requires LZO library v1.03 or newer
-
