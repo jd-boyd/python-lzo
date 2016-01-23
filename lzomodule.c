@@ -29,7 +29,7 @@
  */
 
 
-#define MODULE_VERSION  "1.09"
+#define MODULE_VERSION  "1.11"
 
 #include <Python.h>
 #include <lzo1x.h>

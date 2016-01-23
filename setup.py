@@ -52,11 +52,10 @@ ext = Extension(
     extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args,
 )
-##print ext.__dict__; sys.exit(1)
 
 setup_args = get_kw(
     name="python-lzo",
-    version="1.10",
+    version="1.11",
     description="Python bindings for the LZO data compression library",
     author="Markus F.X.J. Oberhumer",
     author_email="markus@oberhumer.com",
@@ -77,7 +76,6 @@ competitive compression ratio while still decompressing at
 this very high speed.""",
 )
 
-##print distutils.__version__
 if distutils.__version__ >= "1.0.2":
     setup_args["platforms"] = "All"
 

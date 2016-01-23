@@ -87,6 +87,12 @@ def testRaw(src, level=1):
         raise lzo.error("internal error 2")
     print("compressed %6d -> %6d" % (len(src), len(c)))
 
+def test_version():
+    import pkg_resources
+    pkg_version = pkg_resources.require("python-lzo")[0].version
+    mod_version = lzo.__version__.decode('utf-8')
+    assert pkg_version == mod_version, \
+        "%r != %r" %(pkg_version, mod_version)
 
 def main(args):
     # display version information and module documentation
@@ -111,6 +117,8 @@ def main(args):
     test(b"")
     testRaw(b"")
     print("Simple compression test passed.")
+
+    test_version()
 
     # force an exception (because of invalid compressed data)
     assert issubclass(lzo.error, Exception)
