@@ -1,15 +1,22 @@
 language: python
 python:
-  - 2.6
-  - 2.7
-  - 3.3
-  - 3.4
+- 2.6
+- 2.7
+- 3.3
+- 3.4
 env:
-  - LC_ALL=C
+- LC_ALL=C
 before_install:
- - sudo apt-get update -qq
- - sudo apt-get install -qq liblzo2-dev
+- sudo apt-get update -qq
+- sudo apt-get install -qq liblzo2-dev
 install:
-  - "pip install -e ."
-  - "pip install nose"
+- pip install -e .
+- pip install nose
 script: nosetests
+deploy:
+  provider: pypi
+  user: "jdboyd"
+  on:
+    tags: true
+  password:
+    secure: UXQ8s3DwcWo41MNEJW+izSLjL35DCKTvdvipFMeFwb6jMACfHLaGwlj27uAHB0Q+eMTMrQqEQKu52dKrfZ7NVYEPL47sQVs6Z37QzXFDkPBQhlkN0aipnLVomGtxs1JQOhkmQ3dsgPMhQsi+ac5+L+m42Kv1Qua4Go2IO7JfKeM=
