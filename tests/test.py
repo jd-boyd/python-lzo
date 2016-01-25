@@ -35,7 +35,7 @@ from __future__ import print_function
 import sys, string
 
 # update sys.path when running in the build directory
-from util import get_sys_path
+from tests.util import get_sys_path
 sys.path = get_sys_path()
 
 import lzo
@@ -54,7 +54,7 @@ def print_modinfo():
         print(k, d[k])
 
 
-def test(src, level=1):
+def gen(src, level=1):
     a0 = lzo.adler32(src)
     c =  lzo.compress(src, level)
     u1 = lzo.decompress(c)
@@ -71,7 +71,7 @@ def test(src, level=1):
     print("compressed %6d -> %6d" % (len(src), len(c)))
 
 
-def testRaw(src, level=1):
+def gen_raw(src, level=1):
     a0 = lzo.adler32(src)
     c =  lzo.compress(src, level, False)
     u1 = lzo.decompress(c, False, len(src))
@@ -94,6 +94,25 @@ def test_version():
     assert pkg_version == mod_version, \
         "%r != %r" %(pkg_version, mod_version)
 
+def test_lzo():
+    yield gen, b"aaaaaaaaaaaaaaaaaaaaaaaa"
+    yield gen_raw, b"aaaaaaaaaaaaaaaaaaaaaaaa"
+    yield gen, b"abcabcabcabcabcabcabcabc"
+    yield gen_raw, b"abcabcabcabcabcabcabcabc"
+    yield gen, b"abcabcabcabcabcabcabcabc", 9
+    yield gen_raw, b"abcabcabcabcabcabcabcabc", 9
+    yield gen, b""
+    yield gen_raw, b""
+
+
+def test_lzo_big():
+    gen(b" " * 131072)
+
+
+def test_lzo_raw_big():
+    gen_raw(b" " * 131072)
+
+
 def main(args):
     # display version information and module documentation
     print("LZO version %s (0x%x), %s" % (lzo.LZO_VERSION_STRING, lzo.LZO_VERSION, lzo.LZO_VERSION_DATE))
@@ -106,16 +125,16 @@ def main(args):
     ## print_modinfo()
 
     # compress some simple strings
-    test(b"aaaaaaaaaaaaaaaaaaaaaaaa")
-    testRaw(b"aaaaaaaaaaaaaaaaaaaaaaaa")
-    test(b"abcabcabcabcabcabcabcabc")
-    testRaw(b"abcabcabcabcabcabcabcabc")
-    test(b"abcabcabcabcabcabcabcabc", level=9)
-    testRaw(b"abcabcabcabcabcabcabcabc", level=9)
-    test(b" " * 131072)
-    testRaw(b" " * 131072)
-    test(b"")
-    testRaw(b"")
+    gen(b"aaaaaaaaaaaaaaaaaaaaaaaa")
+    gen_raw(b"aaaaaaaaaaaaaaaaaaaaaaaa")
+    gen(b"abcabcabcabcabcabcabcabc")
+    gen_raw(b"abcabcabcabcabcabcabcabc")
+    gen(b"abcabcabcabcabcabcabcabc", level=9)
+    gen_raw(b"abcabcabcabcabcabcabcabc", level=9)
+    gen(b" " * 131072)
+    gen_raw(b" " * 131072)
+    gen(b"")
+    gen_raw(b"")
     print("Simple compression test passed.")
 
     test_version()
