@@ -1,4 +1,5 @@
 ![TravisCI Status](https://travis-ci.org/jd-boyd/python-lzo.png)
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/jd-boyd/python-lzo?svg=true)](https://ci.appveyor.com/project/jd-boyd/python-lzo/branch/master)
 
 ```
                  Python-LZO -- Python bindings for LZO
@@ -6,7 +7,7 @@
               Copyright (c) 1996-2002 Markus F.X.J. Oberhumer
                           <markus@oberhumer.com>
                  http://www.oberhumer.com/opensource/lzo/
-              Copyright (c) 2011-2015 Joshua D. Boyd
+              Copyright (c) 2011-2016 Joshua D. Boyd
                           <jdboyd@jdboyd.net>
                  https://github.com/jd-boyd/python-lzo
 ```

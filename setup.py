@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 # vi:ts=4:et
 
+from __future__ import print_function
+
 import os, sys
 import distutils
 from distutils.core import setup
@@ -20,11 +22,19 @@ if sys.platform == "win32":
     # Windows users have to configure the LZO_DIR path parameter to match
     # their LZO source installation.  The path set here is just an example
     # and thus unlikely to match your installation.
-    LZO_DIR = r"c:\src\lzo-1.08"
+
+    LZO_DIR = os.environ.get('LZO_DIR', r"c:\src\lzo-1.08")
     if not os.path.exists(LZO_DIR):
         raise Exception("please set LZO_DIR to where the lzo source lives")
+    include_dirs.append(os.path.join(LZO_DIR, r"include\lzo"))
     include_dirs.append(os.path.join(LZO_DIR, "include"))
-    extra_objects.append(os.path.join(LZO_DIR, "lzo.lib"))
+    lib1_file = os.path.join(LZO_DIR, "lzo.lib")
+    lib2_file = os.path.join(LZO_DIR, "lzo2.lib")
+    if os.path.exists(lib2_file):
+        lib_file = lib2_file
+    else:
+        lib_file = lib1_file
+    extra_objects.append(lib_file)
 else:
     libraries = ["lzo2"]
     include_dirs.append(os.environ.get("PREFIX", "/usr")+"/include/lzo")
@@ -62,7 +72,7 @@ setup_args = get_kw(
     maintainer="Joshua D. Boyd",
     maintainer_email="jdboyd@jdboyd.net",
     url="https://github.com/jd-boyd/python-lzo",
-    licence="GNU General Public License (GPL)",
+    license="GNU General Public License (GPL)",
     ext_modules=[ext],
     long_description="""
 This module provides Python bindings for the LZO data compression library.
