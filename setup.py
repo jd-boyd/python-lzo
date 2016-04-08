@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import os, sys
 import distutils
+from distutils.cmd import Command
 from distutils.core import setup
 from distutils.extension import Extension
 from distutils.util import split_quoted
@@ -17,6 +18,23 @@ runtime_library_dirs = []
 extra_objects = []
 extra_compile_args = []
 extra_link_args = []
+
+class TestCommand(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import sys, subprocess
+        raise SystemExit(
+            subprocess.call([sys.executable,
+                             '-m',
+                             'nose']))
+
 
 if sys.platform == "win32":
     # Windows users have to configure the LZO_DIR path parameter to match
@@ -65,7 +83,7 @@ ext = Extension(
 
 setup_args = get_kw(
     name="python-lzo",
-    version="1.11",
+    version="1.12",
     description="Python bindings for the LZO data compression library",
     author="Markus F.X.J. Oberhumer",
     author_email="markus@oberhumer.com",
@@ -73,6 +91,10 @@ setup_args = get_kw(
     maintainer_email="jdboyd@jdboyd.net",
     url="https://github.com/jd-boyd/python-lzo",
     license="GNU General Public License (GPL)",
+    tests_require=['nose'],
+    cmdclass={
+        'test': TestCommand
+    },
     ext_modules=[ext],
     long_description="""
 This module provides Python bindings for the LZO data compression library.
