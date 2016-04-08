@@ -2,6 +2,15 @@
 User visible changes for Python-LZO
 =======================================================================
 
+Changes in 1.12 (xx Apr 2016)
+  * Update Windows support to 2.0x.
+  * Start Windows CI testing.
+  * Adjust setup.py for jhbuild compatibility.
+
+Changes in 1.11 (25 Jan 2016)
+  * Fix a versioning problem in the 1.10 release.
+  * Fiddle with travis testing.
+
 Changes in 1.10 (20 Jan 2016)
   * Make Binary header metadata optional.
 
