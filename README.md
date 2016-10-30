@@ -49,8 +49,8 @@ programs that ship with the LZO library. Really.
 
 # Notes
 
-The windows version is untested.  If you do test it, please let me
-know the results.
+The windows version is tested.  
+It is not currently tested on OSX, but that is coming.
 
 # Copyright
 
