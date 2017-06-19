@@ -32,7 +32,7 @@
 #define MODULE_VERSION  "1.12"
 
 #include <Python.h>
-#include <lzo1x.h>
+#include <lzo/lzo1x.h>
 
 /* Python 2x3 compatible macros */
 #if PY_VERSION_HEX >= 0x03000000
