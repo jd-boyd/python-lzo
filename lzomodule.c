@@ -123,6 +123,7 @@ compress(PyObject *dummy, PyObject *args)
     out = (lzo_bytep) PyString_AsString(result_str);
 #endif
 
+    Py_BEGIN_ALLOW_THREADS
     outc = header ? out+5 : out; // leave space for header if needed
     new_len = out_len;
     if (level == 1)
@@ -137,6 +138,8 @@ compress(PyObject *dummy, PyObject *args)
             out[0] = 0xf1;
         err = lzo1x_999_compress(in, in_len, outc, &new_len, wrkmem);
     }
+    Py_END_ALLOW_THREADS
+
     PyMem_Free(wrkmem);
     if (err != LZO_E_OK || new_len > out_len)
     {
@@ -225,8 +228,12 @@ decompress(PyObject *dummy, PyObject *args)
 #else
     out = (lzo_bytep) PyString_AsString(result_str);
 #endif
+
+    Py_BEGIN_ALLOW_THREADS
     new_len = out_len;
     err = lzo1x_decompress_safe(in, in_len, out, &new_len, NULL);
+    Py_END_ALLOW_THREADS
+
     if (err != LZO_E_OK || (header && new_len != out_len) )
     {
         Py_DECREF(result_str);
@@ -311,8 +318,12 @@ optimize(PyObject *dummy, PyObject *args)
 #else
     in = (lzo_bytep) PyString_AsString(result_str);
 #endif
+
+    Py_BEGIN_ALLOW_THREADS
     new_len = out_len;
     err = lzo1x_optimize( header ? in+5 : in, in_len, out, &new_len, NULL);
+    Py_END_ALLOW_THREADS
+
     PyMem_Free(out);
     if (err != LZO_E_OK || (header && new_len != out_len))
     {
@@ -352,7 +363,12 @@ adler32(PyObject *dummy, PyObject *args)
     if (!PyArg_ParseTuple(args, "s#|l", &buf, &len, &val))
         return NULL;
     if (len > 0)
+    {
+        Py_BEGIN_ALLOW_THREADS
         val = lzo_adler32((lzo_uint32)val, (const lzo_bytep)buf, len);
+        Py_END_ALLOW_THREADS
+    }
+        
 #if PY_MAJOR_VERSION >= 3
     return PyLong_FromLong(val);
 #else
