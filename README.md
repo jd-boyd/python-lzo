@@ -60,7 +60,7 @@ simplify this.
 
 Until then, here we go:
 * Download http://www.oberhumer.com/opensource/lzo/download/lzo-2.09.tar.gz
-* extract that file to c:\src\ (should product c:\src\lzo-2.09 )
+* extract that file to `c:\src\` (should produce `c:\src\lzo-2.09` )
 * Install a visual studio compatible with your python build.  If you are using
   python 2.7, MS has a package just for you at: https://www.microsoft.com/en-us/download/details.aspx?id=44266
   Current automated tests are done with Visual Studio 2013, but newer should work as well.
@@ -69,8 +69,8 @@ Until then, here we go:
 # Where's the documentation ?
 
 Python-LZO comes with built-in documentation which is accessible
-using `lzo.__doc__' and `lzo.func__doc__'. See "Chapter 3: Data Model"
-in the Python Reference Manual for more information.
+using `lzo.__doc__` and `lzo.func__doc__`. See ["Chapter 3: Data Model"
+in the Python Reference Manual](https://docs.python.org/3.6/reference/datamodel.html) for more information.
 
 Additionally you should read the docs and study the example
 programs that ship with the LZO library. Really.
