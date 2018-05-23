@@ -368,7 +368,7 @@ adler32(PyObject *dummy, PyObject *args)
         val = lzo_adler32((lzo_uint32)val, (const lzo_bytep)buf, len);
         Py_END_ALLOW_THREADS
     }
-        
+
 #if PY_MAJOR_VERSION >= 3
     return PyLong_FromLong(val);
 #else
