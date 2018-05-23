@@ -2,8 +2,8 @@
 User visible changes for Python-LZO
 =======================================================================
 
-Changes in 1.12 (xx Apr 2016)
-  * Update Windows support to 2.0x.
+Changes in 1.12 (23 Mat 2018)
+  * Update Windows support to lzo 2.0x.
   * Start Windows CI testing.
   * Adjust setup.py for jhbuild compatibility.
 

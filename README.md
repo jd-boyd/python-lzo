@@ -77,7 +77,8 @@ programs that ship with the LZO library. Really.
 
 # Notes
 
-The windows version is tested.
+The Windows version is tested.
+
 It is not currently tested on OSX, but that is coming.
 
 # Copyright
@@ -87,7 +88,7 @@ Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002
 Markus Franz Xaver Johannes Oberhumer <markus@oberhumer.com>
 
 The Python-LZO algorithms implementated post 2011 are
-Copyright (C) 2011, 2014
+Copyright (C) 2011, 2014, 2015, 2016, 2017, 2018
 Joshua D. Boyd <jdboyd@jdboyd.net>
 
 The LZO and Python-LZO algorithms and implementations are distributed under
