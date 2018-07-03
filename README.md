@@ -33,7 +33,7 @@ Python strings.
 
 # Installation
 
-## Ubuntu Linux
+## Ubuntu/Debian Linux
 
 You need the following dependencies installed:
 * `zlib1g-dev`
@@ -42,9 +42,16 @@ You need the following dependencies installed:
 
 Then, just `pip install python-lzo`.
 
-These directions are probably the same as debian.  The requirements
-are similar for Redhat/centos/etc, but the specific package names
-differ.
+## CentOS/Red Hat Enterprise Linux
+
+You need the following dependencies installed:
+
+* `yum install epel-release`
+* `yum install python-pip`
+* `yum install lzo-devel`
+* `yum install lzo-minilzo`
+
+Then, just `pip install python-lzo`.
 
 ## macOS
 
