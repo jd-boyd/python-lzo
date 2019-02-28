@@ -55,7 +55,7 @@ if sys.platform == "win32":
     extra_objects.append(lib_file)
 else:
     libraries = ["lzo2"]
-    include_dirs.append(os.environ.get("PREFIX", "/usr")+"/include/lzo")
+    include_dirs.append(os.environ.get("PREFIX", "/usr")+"/include")
     ##library_dirs.append("/usr/local/lib")
     ##runtime_library_dirs.append("/usr/local/lib")
 
