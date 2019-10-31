@@ -80,13 +80,22 @@ using `lzo.__doc__` and `lzo.func__doc__`. See ["Chapter 3: Data Model"
 in the Python Reference Manual](https://docs.python.org/3.6/reference/datamodel.html) for more information.
 
 Additionally you should read the docs and study the example
-programs that ship with the LZO library. Really.
+programs that ship with the LZO library.
+
+# Python 2 support statement
+
+After Python 2.7 hits end of life on January 1, 2020, a Python 2.7
+support branch will be made and Python 2.7 will eventually be dropped
+from master.
+
+Until then, Python 2.6 support will probably also remain as long as it
+continues to be no more burden than 2.7 itself already is.
 
 # Notes
 
 The Windows version is tested.
 
-It is not currently tested on OSX, but that is coming.
+It is not currently continuously tested on OSX, but that is coming.
 
 # Copyright
 
