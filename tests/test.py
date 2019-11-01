@@ -96,10 +96,13 @@ def test_version():
 
 def test_lzo():
     yield gen, b"aaaaaaaaaaaaaaaaaaaaaaaa"
-    yield gen_raw, b"aaaaaaaaaaaaaaaaaaaaaaaa"
     yield gen, b"abcabcabcabcabcabcabcabc"
-    yield gen_raw, b"abcabcabcabcabcabcabcabc"
     yield gen, b"abcabcabcabcabcabcabcabc", 9
+
+
+def test_lzo_raw():
+    yield gen_raw, b"aaaaaaaaaaaaaaaaaaaaaaaa"
+    yield gen_raw, b"abcabcabcabcabcabcabcabc"
     yield gen_raw, b"abcabcabcabcabcabcabcabc", 9
 
 
@@ -114,3 +117,7 @@ def test_lzo_big():
 
 def test_lzo_raw_big():
     gen_raw(b" " * 131072)
+
+
+def test_lzo_compress_extremely_big():
+    b = lzo.compress(bytes(bytearray((1024**3)*2)))
