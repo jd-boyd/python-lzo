@@ -31,6 +31,8 @@
 
 #define MODULE_VERSION  "1.12"
 
+#define PY_SSIZE_T_CLEAN
+
 #include <Python.h>
 #include <lzo/lzo1x.h>
 
@@ -83,7 +85,8 @@ compress(PyObject *dummy, PyObject *args)
     lzo_uint in_len;
     lzo_uint out_len;
     lzo_uint new_len;
-    int len;
+    //int len;
+    Py_ssize_t len;
     int level = 1;
     int header = 1;
     int err;
