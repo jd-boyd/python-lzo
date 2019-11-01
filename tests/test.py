@@ -101,6 +101,9 @@ def test_lzo():
     yield gen_raw, b"abcabcabcabcabcabcabcabc"
     yield gen, b"abcabcabcabcabcabcabcabc", 9
     yield gen_raw, b"abcabcabcabcabcabcabcabc", 9
+
+
+def test_lzo_empty():
     yield gen, b""
     yield gen_raw, b""
 
@@ -111,43 +114,3 @@ def test_lzo_big():
 
 def test_lzo_raw_big():
     gen_raw(b" " * 131072)
-
-
-def main(args):
-    # display version information and module documentation
-    print("LZO version %s (0x%x), %s" % (lzo.LZO_VERSION_STRING, lzo.LZO_VERSION, lzo.LZO_VERSION_DATE))
-    print(lzo.__file__)
-    print()
-    print(lzo.__doc__)
-
-    # display additional module information
-    ## print dir(lzo)
-    ## print_modinfo()
-
-    # compress some simple strings
-    gen(b"aaaaaaaaaaaaaaaaaaaaaaaa")
-    gen_raw(b"aaaaaaaaaaaaaaaaaaaaaaaa")
-    gen(b"abcabcabcabcabcabcabcabc")
-    gen_raw(b"abcabcabcabcabcabcabcabc")
-    gen(b"abcabcabcabcabcabcabcabc", level=9)
-    gen_raw(b"abcabcabcabcabcabcabcabc", level=9)
-    gen(b" " * 131072)
-    gen_raw(b" " * 131072)
-    gen(b"")
-    gen_raw(b"")
-    print("Simple compression test passed.")
-
-    test_version()
-
-    # force an exception (because of invalid compressed data)
-    assert issubclass(lzo.error, Exception)
-    try:
-        x = lzo.decompress("xx")
-    except lzo.error:
-        pass
-    else:
-        print("Exception handling does NOT work !")
-    return 0
-
-if __name__ == '__main__':
-    sys.exit(main(sys.argv))
