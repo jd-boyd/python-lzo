@@ -45,7 +45,7 @@ def get_sys_path(p=None):
     if p: p0 = p[0]
     #
     plat = get_platform()
-    plat_specifier = "%s-%s" % (plat, sys.version[:3])
+    plat_specifier = "%s-%d.%d" % (plat, sys.version_info[0], sys.version_info[1])
     ##print plat, plat_specifier
     #
     for prefix in (p0, os.curdir, os.pardir,):

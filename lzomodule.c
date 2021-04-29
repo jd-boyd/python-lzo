@@ -31,6 +31,8 @@
 
 #define MODULE_VERSION  "1.12"
 
+#define PY_SSIZE_T_CLEAN
+
 #include <Python.h>
 #include <lzo/lzo1x.h>
 
@@ -83,7 +85,7 @@ compress(PyObject *dummy, PyObject *args)
     lzo_uint in_len;
     lzo_uint out_len;
     lzo_uint new_len;
-    int len;
+    Py_ssize_t len;
     int level = 1;
     int header = 1;
     int err;
@@ -94,6 +96,16 @@ compress(PyObject *dummy, PyObject *args)
         return NULL;
     if (len < 0)
         return NULL;
+
+    if (len > LZO_UINT_MAX) {
+      PyErr_SetString(LzoError, "Input size is larger than LZO_UINT_MAX");
+      return NULL;
+    }
+
+    if ((len + len / 16 + 64 + 3) > LZO_UINT_MAX) {
+      PyErr_SetString(LzoError, "Output size is larger than LZO_UINT_MAX");
+      return NULL;
+    }
 
     in_len = len;
     out_len = in_len + in_len / 16 + 64 + 3;
@@ -189,7 +201,7 @@ decompress(PyObject *dummy, PyObject *args)
     lzo_uint in_len;
     lzo_uint out_len;
     lzo_uint new_len;
-    int len;
+    Py_ssize_t len;
     int buflen = -1;
     int header = 1;
     int err;
@@ -274,7 +286,7 @@ optimize(PyObject *dummy, PyObject *args)
     lzo_uint in_len;
     lzo_uint out_len;
     lzo_uint new_len;
-    int len;
+    Py_ssize_t len;
     int err;
     int header = 1;
     int buflen = -1;
@@ -356,7 +368,7 @@ static PyObject *
 adler32(PyObject *dummy, PyObject *args)
 {
     char *buf;
-    int len;
+    Py_ssize_t len;
     unsigned long val = 1; /* == lzo_adler32(0, NULL, 0); */
 
     UNUSED(dummy);
@@ -392,7 +404,7 @@ static PyObject *
 crc32(PyObject *dummy, PyObject *args)
 {
     char *buf;
-    int len;
+    Py_ssize_t len;
     unsigned long val = 0; /* == lzo_crc32(0, NULL, 0); */
 
     UNUSED(dummy);
