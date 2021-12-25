@@ -1,4 +1,4 @@
-![example workflow](https://github.com/jd-boyd/python-lzo/actions/workflows/tests/badge.svg)
+![example workflow](https://github.com/jd-boyd/python-lzo/actions/workflows/tests.yaml/badge.svg)
 
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/jd-boyd/python-lzo?svg=true)](https://ci.appveyor.com/project/jd-boyd/python-lzo/branch/master)
 
