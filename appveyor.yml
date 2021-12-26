@@ -36,17 +36,17 @@ install:
   - "%PYTHON%\\python.exe -m pip install wheel"
   - "%PYTHON%\\python.exe -m pip install nose"
   - if not exist C:\src\ (md C:\src\)
-  - if not exist C:\src\lzo-2.09.tar.gz (curl -fsS http://www.oberhumer.com/opensource/lzo/download/lzo-2.09.tar.gz -o C:\src\lzo-2.09.tar.gz)
+  - if not exist C:\src\lzo-2.10.tar.gz (curl -fsS http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz -o C:\src\lzo-2.10.tar.gz)
   - "%PYTHON%\\python.exe tarxfz.py"
   - dir
   - dir c:\src
-  - dir c:\src\lzo-2.09
-  - dir c:\src\lzo-2.09\include
+  - dir c:\src\lzo-2.10
+  - dir c:\src\lzo-2.10\include
   - set PROJ_DIR=%cd%
-  - cd c:\src\lzo-2.09
+  - cd c:\src\lzo-2.10
   - call "%VCVARSALL%"
-  - call c:\src\lzo-2.09\B\win32\vc.bat
-  - dir c:\src\lzo-2.09
+  - call c:\src\lzo-2.10\B\win32\vc.bat
+  - dir c:\src\lzo-2.10
   - cd %PROJ_DIR%
 
 build_script:
