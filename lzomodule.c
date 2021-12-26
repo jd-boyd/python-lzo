@@ -29,7 +29,7 @@
  */
 
 
-#define MODULE_VERSION  "1.12"
+#define MODULE_VERSION  "1.13"
 
 #define PY_SSIZE_T_CLEAN
 

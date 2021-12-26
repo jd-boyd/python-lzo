@@ -2,7 +2,11 @@
 User visible changes for Python-LZO
 =======================================================================
 
-Changes in 1.12 (23 Mat 2018)
+Changes in 1.13 (26 Dec 2021)
+  * Add python2 support statement
+  * Fix 32bit int limitations
+
+Changes in 1.12 (23 May 2018)
   * Update Windows support to lzo 2.0x.
   * Start Windows CI testing.
   * Adjust setup.py for jhbuild compatibility.

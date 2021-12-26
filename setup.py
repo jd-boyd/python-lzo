@@ -83,7 +83,7 @@ ext = Extension(
 
 setup_args = get_kw(
     name="python-lzo",
-    version="1.12",
+    version="1.13",
     description="Python bindings for the LZO data compression library",
     author="Markus F.X.J. Oberhumer",
     author_email="markus@oberhumer.com",
