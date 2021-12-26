@@ -23,10 +23,10 @@ environment:
     - PYTHON: "C:\\Python38-x64"
       VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"    
 
-    - PYTHON: "C:\\Python39"
-      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"        
-    - PYTHON: "C:\\Python39-x64"
-      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"        
+    # - PYTHON: "C:\\Python39"
+    #   VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"        
+    # - PYTHON: "C:\\Python39-x64"
+    #   VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"        
     
     #   DISTUTILS_USE_SDK: "1"
     # - PYTHON: "C:\\Python35-x64"
@@ -44,7 +44,7 @@ install:
   - dir c:\src\lzo-2.10\include
   - set PROJ_DIR=%cd%
   - cd c:\src\lzo-2.10
-  - call "%VCVARSALL%"
+  - cmd: call "%VCVARSALL%"
   - call c:\src\lzo-2.10\B\win32\vc.bat
   - dir c:\src\lzo-2.10
   - cd %PROJ_DIR%
