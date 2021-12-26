@@ -2,6 +2,9 @@
 User visible changes for Python-LZO
 =======================================================================
 
+Changes in 1.15 (XX Jan 2022)
+  * 
+
 Changes in 1.14 (26 Dec 2021)
   * 1.13 was accidently not python2.7 compatible in packaging.  Try again.
 
