@@ -2,6 +2,9 @@
 User visible changes for Python-LZO
 =======================================================================
 
+Changes in 1.14 (26 Dec 2021)
+  * 1.13 was accidently not python2.7 compatible in packaging.  Try again.
+
 Changes in 1.13 (26 Dec 2021)
   * Add python2 support statement
   * Fix 32bit int limitations
