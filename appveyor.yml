@@ -8,18 +8,23 @@ environment:
     # isn't covered by this document) at the time of writing.
 
     - PYTHON: "C:\\Python27"
-      VCVER: "12.0"
-    - PYTHON: "C:\\Python35"
-      VCVER: "12.0"    
-    - PYTHON: "C:\\Python36"
-      VCVER: "12.0"    
+      VCVARSALL: "C:\\Program\ Files\ (x86)\\Microsoft\ Visual\ Studio\ 12.0\\VC\\vcvarsall.bat"
+#    - PYTHON: "C:\\Python35"
+#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat" 
+#    - PYTHON: "C:\\Python36"
+#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat"
     - PYTHON: "C:\\Python37"
-      VCVER: "12.0"    
+      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat" 
     - PYTHON: "C:\\Python38"
-      VCVER: "12.0"    
+      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"
+    - PYTHON: "C:\\Python38"
+      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"    
+
     - PYTHON: "C:\\Python39"
-      VCVER: "12.0"    
-#    - PYTHON: "C:\\Python39-x64"
+      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"        
+    - PYTHON: "C:\\Python39-x64"
+      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"        
+    
     #   DISTUTILS_USE_SDK: "1"
     # - PYTHON: "C:\\Python35-x64"
 
@@ -36,7 +41,7 @@ install:
   - dir c:\src\lzo-2.09\include
   - set PROJ_DIR=%cd%
   - cd c:\src\lzo-2.09
-  - call "C:\Program Files (x86)\Microsoft Visual Studio %VCVER%\VC\vcvarsall.bat"
+  - call "%VCVARSALL%"
   - call c:\src\lzo-2.09\B\win32\vc.bat
   - dir c:\src\lzo-2.09
   - cd %PROJ_DIR%
