@@ -8,12 +8,18 @@ environment:
     # isn't covered by this document) at the time of writing.
 
     - PYTHON: "C:\\Python27"
+      VCVER: "12.0"
     - PYTHON: "C:\\Python35"
+      VCVER: "12.0"    
     - PYTHON: "C:\\Python36"
+      VCVER: "12.0"    
     - PYTHON: "C:\\Python37"
+      VCVER: "12.0"    
     - PYTHON: "C:\\Python38"
+      VCVER: "12.0"    
     - PYTHON: "C:\\Python39"
-    - PYTHON: "C:\\Python39-x64"    
+      VCVER: "12.0"    
+#    - PYTHON: "C:\\Python39-x64"
     #   DISTUTILS_USE_SDK: "1"
     # - PYTHON: "C:\\Python35-x64"
 
@@ -30,7 +36,7 @@ install:
   - dir c:\src\lzo-2.09\include
   - set PROJ_DIR=%cd%
   - cd c:\src\lzo-2.09
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"
+  - call "C:\Program Files (x86)\Microsoft Visual Studio %VCVER%\VC\vcvarsall.bat"
   - call c:\src\lzo-2.09\B\win32\vc.bat
   - dir c:\src\lzo-2.09
   - cd %PROJ_DIR%
