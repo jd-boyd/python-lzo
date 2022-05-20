@@ -9,7 +9,6 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - 3.6
           - 3.7
           - 3.8
           - 3.9
@@ -17,11 +16,27 @@ jobs:
           - pypy-3.7
         os:
           - ubuntu-latest
-#          - macos-latest
+          - macos-10.15
+          - macos-11
+          - macos-12
 #          - windows-latest
         exclude:
           - os: macos-latest
             python-version: 'pypy-3.6'
+          - os: macos-10.15
+            python-version: 'pypy-3.6'
+          - os: macos-11
+            python-version: 'pypy-3.6'
+          - os: macos-12
+            python-version: 'pypy-3.6'
+          - os: macos-latest
+            python-version: 'pypy-3.7'
+          - os: macos-10.15
+            python-version: 'pypy-3.7'
+          - os: macos-11
+            python-version: 'pypy-3.7'
+          - os: macos-12
+            python-version: 'pypy-3.7'
     runs-on:  ${{ matrix.os }}
     name: ${{ matrix.os }} @ ${{ matrix.python-version }}
     steps:
@@ -34,11 +49,25 @@ jobs:
       - run: |
            if [ "$RUNNER_OS" == "Linux" ]; then
               sudo apt install liblzo2-dev
-           elif [ "$RUNNER_OS" == "Windows" ]; then
-              echo "$RUNNER_OS not supported"
            else
-              echo "$RUNNER_OS not supported"
+              echo "$RUNNER_OS uses included lzo source"
+              echo PWD: `pwd`
+              echo LS lzo
+              ls -l lzo-2.10/
+              echo LS lzo include
+              ls -l lzo-2.10/include/
+              cd lzo-2.10
+              ./configure --enable-shared --disable-dependency-tracking --prefix=`pwd`
+              make
+              make test &> test_results
+              make install
+              cd ..
+              ls -l lzo-2.10/
+              find ./lzo-2.10/ -name "*lzo2*"
            fi
+           echo LZO SETUP DONE
       - run: python setup.py install
-      - run: pip install nose
+      - run: pip install nose wheel
       - run: nosetests --with-doctest tests/
+      - run: ls -l
+      - run: python setup.py sdist bdist_wheel
