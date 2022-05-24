@@ -79,17 +79,17 @@ typedef int (*lzo_decompress_fn)(const lzo_bytep, lzo_uint, lzo_bytep, lzo_uintp
 ************************************************************************/
 
 static /* const */ char compress__doc__[] =
-"compress(string[,algorithm[,level[,header]]]) -- Compress string, returning a string "
+"compress(string[,level[,header[,algorithm]]]) -- Compress string, returning a string "
 "containing compressed data.\n"
-"algorithm  - can be either LZO1, LZO1A, LZO1B, LZO1C, LZO1F, LZO1X, LZO1Y, LZO1Z, LZO2A."
-"(default: LZO1X).\n"
 "level  - Set compression level of either 1 (default) or 9.\n"
 "header - Include metadata header for decompression in the output "
 "(default: True).\n"
+"algorithm (keyword argument)  - can be either LZO1, LZO1A, LZO1B, LZO1C, LZO1F, LZO1X, LZO1Y, LZO1Z, LZO2A."
+"(default: LZO1X).\n"
 ;
 
 static PyObject *
-compress(PyObject *dummy, PyObject *args)
+compress(PyObject *dummy, PyObject *args, PyObject *kwds)
 {
     PyObject *result_str;
     lzo_voidp wrkmem = NULL;
@@ -104,6 +104,7 @@ compress(PyObject *dummy, PyObject *args)
     int header = 1;
     int err;
 
+    static char* argnames[] = {"", "", "", "algorithm", NULL};
     char *algorithm = "LZO1X";
     lzo_compress_fn compress_1_ptr;
     lzo_compress_fn compress_999_ptr;
@@ -112,7 +113,7 @@ compress(PyObject *dummy, PyObject *args)
 
     /* init */
     UNUSED(dummy);
-    if (!PyArg_ParseTuple(args, "s#|sii", &in, &len, &algorithm, &level, &header))
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#|ii$s", argnames, &in, &len, &level, &header, &algorithm))
         return NULL;
     if (len < 0)
         return NULL;
@@ -280,16 +281,16 @@ compress(PyObject *dummy, PyObject *args)
 ************************************************************************/
 
 static /* const */ char decompress__doc__[] =
-"decompress(string[,algorithm[,header[,buflen]]]) -- Decompress the data in string, returning a string containing the decompressed data.\n"
+"decompress(string[,header[,buflen[,algorithm]]]) -- Decompress the data in string, returning a string containing the decompressed data.\n"
 "header - Metadata header is included in input (default: True).\n"
-"algorithm  - can be either LZO1, LZO1A, LZO1B, LZO1C, LZO1F, LZO1X, LZO1Y, LZO1Z, LZO2A."
-"(default: LZO1X).\n"
 "buflen - If header is False, a buffer length in bytes must be given that "
 "will fit the output.\n"
+"algorithm (keyword argument) - can be either LZO1, LZO1A, LZO1B, LZO1C, LZO1F, LZO1X, LZO1Y, LZO1Z, LZO2A."
+"(default: LZO1X).\n"
 ;
 
 static PyObject *
-decompress(PyObject *dummy, PyObject *args)
+decompress(PyObject *dummy, PyObject *args, PyObject *kwds)
 {
     PyObject *result_str;
     const lzo_bytep in;
@@ -302,12 +303,13 @@ decompress(PyObject *dummy, PyObject *args)
     int header = 1;
     int err;
 
+    static char* argnames[] = {"", "", "", "algorithm", NULL};
     char *algorithm = "LZO1X";
     lzo_decompress_fn decompress_ptr;
 
     /* init */
     UNUSED(dummy);
-    if (!PyArg_ParseTuple(args, "s#|sii", &in, &len, &algorithm, &header, &buflen))
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#|ii$s", argnames, &in, &len, &header, &buflen, &algorithm))
         return NULL;
     if (header) {
         if (len < 5 + 3 || in[0] < 0xf0 || in[0] > 0xf1)
@@ -564,9 +566,9 @@ crc32(PyObject *dummy, PyObject *args)
 static /* const */ PyMethodDef methods[] =
 {
     {"adler32",    (PyCFunction)adler32,    METH_VARARGS, adler32__doc__},
-    {"compress",   (PyCFunction)compress,   METH_VARARGS, compress__doc__},
+    {"compress",   (PyCFunction)compress,   METH_VARARGS | METH_KEYWORDS, compress__doc__},
     {"crc32",      (PyCFunction)crc32,      METH_VARARGS, crc32__doc__},
-    {"decompress", (PyCFunction)decompress, METH_VARARGS, decompress__doc__},
+    {"decompress", (PyCFunction)decompress, METH_VARARGS | METH_KEYWORDS, decompress__doc__},
     {"optimize",   (PyCFunction)optimize,   METH_VARARGS, optimize__doc__},
     {NULL, NULL, 0, NULL}
 };
