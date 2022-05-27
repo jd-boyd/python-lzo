@@ -1,6 +1,6 @@
 image: Visual Studio 2022
 environment:
-  LZO_DIR: C:\src\lzo-2.09
+  LZO_DIR: "C:\\src\\lzo-2.10"
   matrix:
 
     # For Python versions available on Appveyor, see
@@ -11,48 +11,53 @@ environment:
 #    - PYTHON: "C:\\Python27"
 #      VCVARSALL: "C:\\Program\ Files\ (x86)\\Microsoft\ Visual\ Studio\ 12.0\\VC\\vcvarsall.bat"
 #    - PYTHON: "C:\\Python35"
-#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat" 
+#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat"
 #    - PYTHON: "C:\\Python36"
 #      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat"
 #    - PYTHON: "C:\\Python37"
-#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat" 
+#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat"
 
 
     - PYTHON: "C:\\Python37"
-      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat" 
+      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat"
 
-    - PYTHON: "C:\\Python38"
-      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"
-    - PYTHON: "C:\\Python38"
-      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"    
-    - PYTHON: "C:\\Python38-x64"
-      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"    
+#    - PYTHON: "C:\\Python38"
+#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\vsdevcmd\\ext\\vcvars.bat"
+
+#    - PYTHON: "C:\\Python38-x64"
+#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\vsdevcmd\\ext\\vcvars.bat x64"
+
+
+#    - PYTHON: "C:\\Python38"
+#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"
+
+    # - PYTHON: "C:\\Python38-x64"
+    #   VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
 
     # - PYTHON: "C:\\Python39"
-    #   VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"        
+    #   VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"
     # - PYTHON: "C:\\Python39-x64"
-    #   VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"        
-    
+    #   VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+
     #   DISTUTILS_USE_SDK: "1"
     # - PYTHON: "C:\\Python35-x64"
 
 install:
-  # We need wheel installed to build wheels
-  - "%PYTHON%\\python.exe -m pip install wheel"
-  - "%PYTHON%\\python.exe -m pip install nose"
-  - if not exist C:\src\ (md C:\src\)
-  - if not exist C:\src\lzo-2.10.tar.gz (curl -fsS http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz -o C:\src\lzo-2.10.tar.gz)
-  - "%PYTHON%\\python.exe tarxfz.py"
-  - dir
-  - dir c:\src
-  - dir c:\src\lzo-2.10
-  - dir c:\src\lzo-2.10\include
-  - set PROJ_DIR=%cd%
-  - cd c:\src\lzo-2.10
-  - cmd: call "%VCVARSALL%"
-  - call c:\src\lzo-2.10\B\win32\vc.bat
-  - dir c:\src\lzo-2.10
-  - cd %PROJ_DIR%
+  - cmd: |
+      "%PYTHON%\\python.exe" -m pip install nose
+      if not exist C:\\src\\ (md C:\\src\\)
+      if not exist C:\\src\\lzo-2.10.tar.gz (curl -fsS http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz -o C:\\src\\lzo-2.10.tar.gz)
+      "%PYTHON%\\python.exe" tarxfz.py
+      dir
+      dir c:\src
+      dir c:\src\lzo-2.10
+      dir c:\src\lzo-2.10\include
+      set PROJ_DIR=%cd%
+      cd c:\src\lzo-2.10
+      call "%VCVARSALL%"
+      call c:\src\lzo-2.10\B\win32\vc.bat
+      dir c:\src\lzo-2.10
+      cd %PROJ_DIR%
 
 build_script:
   - "%PYTHON%\\python.exe setup.py install"
@@ -72,7 +77,8 @@ after_test:
   # Again, you only need build.cmd if you're building C extensions for
   # 64-bit Python 3.3/3.4. And you need to use %PYTHON% to get the correct
   # interpreter
-  - "build.cmd %PYTHON%\\python.exe setup.py dist bdist_wheel"
+  - "build.cmd %PYTHON%\\python.exe -m pip install wheel"
+  - "build.cmd %PYTHON%\\python.exe setup.py sdist bdist_wheel"
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory

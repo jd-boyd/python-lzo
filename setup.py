@@ -4,6 +4,7 @@
 from __future__ import print_function
 
 import os, sys
+import setuptools
 import distutils
 from distutils.cmd import Command
 from distutils.core import setup
@@ -42,6 +43,7 @@ if sys.platform == "win32":
     # and thus unlikely to match your installation.
 
     LZO_DIR = os.environ.get('LZO_DIR', r"c:\src\lzo-2.10")
+    print("LZO_DIR:", LZO_DIR)
     if not os.path.exists(LZO_DIR):
         raise Exception("please set LZO_DIR to where the lzo source lives")
     include_dirs.append(os.path.join(LZO_DIR, r"include\lzo"))
