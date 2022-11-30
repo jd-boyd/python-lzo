@@ -314,10 +314,10 @@ decompress(PyObject *dummy, PyObject *args, PyObject *kwds)
     if (header) {
         if (len < 5 + 3 || in[0] < 0xf0 || in[0] > 0xf1)
             goto header_error;
-        out_len = (in[1] << 24) | (in[2] << 16) | (in[3] << 8) | in[4];
+        out_len = ((lzo_uint)in[1] << 24) | (in[2] << 16) | (in[3] << 8) | in[4];
         in_len = len - 5;
         in += 5;
-        if ((int)out_len < 0 || in_len > out_len + out_len / 64 + 16 + 3)
+        if (out_len < 0 || in_len > out_len + out_len / 64 + 16 + 3)
             goto header_error;
     }
     else {
