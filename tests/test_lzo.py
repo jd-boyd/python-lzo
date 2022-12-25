@@ -32,6 +32,7 @@
 
 from __future__ import print_function
 import inspect
+import pytest
 import sys, string
 
 # update sys.path when running in the build directory
@@ -111,34 +112,35 @@ def test_version():
     assert pkg_version == mod_version, \
         "%r != %r" %(pkg_version, mod_version)
 
-def test_lzo():
-    yield gen, b"aaaaaaaaaaaaaaaaaaaaaaaa"
-    yield gen, b"abcabcabcabcabcabcabcabc"
-    yield gen, b"abcabcabcabcabcabcabcabc", 9
+@pytest.mark.parametrize("src, level", [(b"aaaaaaaaaaaaaaaaaaaaaaaa", 1), (b"abcabcabcabcabcabcabcabc", 1), (b"abcabcabcabcabcabcabcabc", 9)])
+def test_lzo(src, level):
+    gen(src, level)
 
-def test_lzo_all():
-    yield gen_all, b"aaaaaaaaaaaaaaaaaaaaaaaa"
-    yield gen_all, b"abcabcabcabcabcabcabcabc"
-    yield gen_all, b"abcabcabcabcabcabcabcabc"
+@pytest.mark.parametrize("src", [b"aaaaaaaaaaaaaaaaaaaaaaaa", b"abcabcabcabcabcabcabcabc"])
+def test_lzo_all(src):
+    gen_all(src)
 
-def test_lzo_raw():
-    yield gen_raw, b"aaaaaaaaaaaaaaaaaaaaaaaa"
-    yield gen_raw, b"abcabcabcabcabcabcabcabc"
-    yield gen_raw, b"abcabcabcabcabcabcabcabc", 9
+@pytest.mark.parametrize("src, level", [(b"aaaaaaaaaaaaaaaaaaaaaaaa", 1), (b"abcabcabcabcabcabcabcabc", 1), (b"abcabcabcabcabcabcabcabc", 9)])
+def test_lzo_raw(src, level):
+    gen_raw(src, level)
 
 
 def test_lzo_empty():
-    yield gen, b""
-    yield gen_raw, b""
+    gen(b"")
 
 def test_lzo_empty_all():
-    yield gen_all, b""
+    gen_all(b"")
+
+def test_lzo_empty_raw():
+    gen_raw(b"")
 
 def test_lzo_big():
     gen(b" " * 131072)
+
+def test_lzo_big_all():
     gen_all(b" " * 131072)
 
-def test_lzo_raw_big():
+def test_lzo_big_raw():
     gen_raw(b" " * 131072)
 
 
@@ -147,14 +149,3 @@ if sys.maxsize > 1<<32:
     # this much data requires a 64-bit system.
     def test_lzo_compress_extremely_big():
         b = lzo.compress(bytes(bytearray((1024**3)*2)))
-
-if __name__ == "__main__":
-    all_tests = (test_lzo, test_lzo_raw, test_lzo_empty, test_lzo_big, test_lzo_raw_big, test_lzo_all, test_lzo_empty_all)
-    for test_func in all_tests:
-        if inspect.isgeneratorfunction(test_func) is True:
-            for test_case in test_func():
-                test = test_case[0]
-                args = test_case[1:]
-                test(*args)
-        else:
-            test_func()
