@@ -67,7 +67,7 @@ jobs:
            fi
            echo LZO SETUP DONE
       - run: python setup.py install
-      - run: pip install nose wheel
-      - run: nosetests --with-doctest tests/
+      - run: pip install pytest wheel
+      - run: pytest --doctest-modules tests/
       - run: ls -l
       - run: python setup.py sdist bdist_wheel

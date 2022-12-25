@@ -34,7 +34,7 @@ class TestCommand(Command):
         raise SystemExit(
             subprocess.call([sys.executable,
                              '-m',
-                             'nose']))
+                             'pytest']))
 
 
 if sys.platform == "win32":
@@ -107,7 +107,7 @@ setup_args = get_kw(
     maintainer_email="jdboyd@jdboyd.net",
     url="https://github.com/jd-boyd/python-lzo",
     license="GNU General Public License (GPL)",
-    tests_require=['nose'],
+    tests_require=['pytest'],
     cmdclass={
         'test': TestCommand
     },

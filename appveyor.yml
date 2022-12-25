@@ -44,7 +44,7 @@ environment:
 
 install:
   - cmd: |
-      "%PYTHON%\\python.exe" -m pip install nose
+      "%PYTHON%\\python.exe" -m pip install pytest
       if not exist C:\\src\\ (md C:\\src\\)
       if not exist C:\\src\\lzo-2.10.tar.gz (curl -fsS http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz -o C:\\src\\lzo-2.10.tar.gz)
       "%PYTHON%\\python.exe" tarxfz.py
