@@ -1,0 +1,56 @@
+name: Build wheels for Windows x64
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-w64:
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: cmd
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    name: ${{ matrix.python-version }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - name: Download lzo and extract it
+        run: |
+          if not exist C:\src\ (md C:\src)
+          if not exist C:\src\lzo-2.10.tar.gz (curl -fsS http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz -o C:\src\lzo-2.10.tar.gz)
+          python tarxfz.py
+      - name: Run cmake
+        working-directory: C:\src\lzo-2.10
+        run: |
+          md build
+          cd build
+          cmake ..
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: x64
+      - name: Build lzo static lib
+        working-directory: C:\src\lzo-2.10\build
+        run: msbuild lzo_static_lib.vcxproj -p:Configuration=Release;Platform=x64;OutDir=C:\src\lzo-2.10
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - name: Build wheel
+        env:
+          LZO_DIR: C:\src\lzo-2.10
+        run: |
+          python -m pip install -U pip
+          python -m pip install -U wheel
+          python setup.py bdist_wheel
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: dist
+          if-no-files-found: error
