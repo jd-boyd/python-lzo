@@ -1,6 +1,6 @@
 image: Visual Studio 2022
 environment:
-  LZO_DIR: "C:\\src\\lzo-2.10"
+  LZO_DIR: ".\\lzo-2.10"
   matrix:
 
     # For Python versions available on Appveyor, see
@@ -8,12 +8,6 @@ environment:
     # The list here is complete (excluding Python 2.6, which
     # isn't covered by this document) at the time of writing.
 
-#    - PYTHON: "C:\\Python27"
-#      VCVARSALL: "C:\\Program\ Files\ (x86)\\Microsoft\ Visual\ Studio\ 12.0\\VC\\vcvarsall.bat"
-#    - PYTHON: "C:\\Python35"
-#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat"
-#    - PYTHON: "C:\\Python36"
-#      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat"
 #    - PYTHON: "C:\\Python37"
 #      VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\vcvarsall.bat"
 
@@ -39,24 +33,14 @@ environment:
     # - PYTHON: "C:\\Python39-x64"
     #   VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
 
-    #   DISTUTILS_USE_SDK: "1"
-    # - PYTHON: "C:\\Python35-x64"
-
 install:
   - cmd: |
       "%PYTHON%\\python.exe" -m pip install pytest
-      if not exist C:\\src\\ (md C:\\src\\)
-      if not exist C:\\src\\lzo-2.10.tar.gz (curl -fsS http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz -o C:\\src\\lzo-2.10.tar.gz)
-      "%PYTHON%\\python.exe" tarxfz.py
-      dir
-      dir c:\src
-      dir c:\src\lzo-2.10
-      dir c:\src\lzo-2.10\include
       set PROJ_DIR=%cd%
-      cd c:\src\lzo-2.10
+      cd lzo-2.10
       call "%VCVARSALL%"
-      call c:\src\lzo-2.10\B\win32\vc.bat
-      dir c:\src\lzo-2.10
+      call .\B\win32\vc.bat
+      dir
       cd %PROJ_DIR%
 
 build_script:
