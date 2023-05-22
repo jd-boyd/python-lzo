@@ -100,8 +100,8 @@ It is not currently continuously tested on OSX, but that is coming.
    `lzomodule.c`.
 1. Update NEWS.
 1. Tag with new release.
-1. wheels
-1. PyPi
+1. wheels (download from github actions)
+1. Upload to PyPi (`twine upload dist/*`)
 
 # Copyright
 
