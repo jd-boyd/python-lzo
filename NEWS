@@ -3,7 +3,11 @@ User visible changes for Python-LZO
 =======================================================================
 
 Changes in 1.15 (XX Jan 2022)
-  * 
+  * Remove python 2.x support.
+  * Update to PEP517 compliance.
+  * Migrate CI to github actions.
+  * Provide Windows Wheels.
+  * Update windows/macos support to lzo 2.10
 
 Changes in 1.14 (26 Dec 2021)
   * 1.13 was accidently not python2.7 compatible in packaging.  Try again.

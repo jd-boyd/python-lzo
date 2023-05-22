@@ -85,18 +85,23 @@ programs that ship with the LZO library.
 
 # Python 2 support statement
 
-After Python 2.7 hits end of life on January 1, 2020, a Python 2.7
-support branch will be made and Python 2.7 will eventually be dropped
-from master.
-
-Until then, Python 2.6 support will probably also remain as long as it
-continues to be no more burden than 2.7 itself already is.
+As of 1.15, Python 2.x is unsupported. To continue using Python 2.6 or
+Python 2.7, please stick with version 1.14.
 
 # Notes
 
 The Windows version is tested.
 
 It is not currently continuously tested on OSX, but that is coming.
+
+# Releasing
+
+1. Update version in `setup.py` and the `MODULE_VERSION` define in
+   `lzomodule.c`.
+1. Update NEWS.
+1. Tag with new release.
+1. wheels
+1. PyPi
 
 # Copyright
 
@@ -105,8 +110,11 @@ Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002
 Markus Franz Xaver Johannes Oberhumer <markus@oberhumer.com>
 
 The Python-LZO algorithms implementated post 2011 are
-Copyright (C) 2011, 2014, 2015, 2016, 2017, 2018
-Joshua D. Boyd <jdboyd@jdboyd.net>
+Copyright (C) 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
+2022, & 2023
+Joshua D. Boyd <jdboyd@jdboyd.net> and others as denoted in the git
+history.
+
 
 The LZO and Python-LZO algorithms and implementations are distributed under
 the terms of the GNU General Public License (GPL).  See the file COPYING.
