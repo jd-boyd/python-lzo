@@ -60,8 +60,6 @@ jobs:
             python-version: '3.11'
           - os: macos-10.15
             python-version: '3.11'
-          - os: windows-latest
-            python-version: '3.11'
     runs-on:  ${{ matrix.os }}
     name: ${{ matrix.os }} @ ${{ matrix.python-version }}
     steps:
