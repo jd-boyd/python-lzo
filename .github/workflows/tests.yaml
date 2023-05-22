@@ -12,23 +12,18 @@ jobs:
           - 3.7
           - 3.8
           - 3.9
-          - pypy-3.6
+          - "3.10"
+          - 3.11
           - pypy-3.7
         os:
           - ubuntu-latest
           - macos-10.15
-          - macos-11
-          - macos-12
-#          - windows-latest
+#          - macos-11
+#          - macos-12
+          - macos-latest
+          - windows-latest
         exclude:
-          - os: macos-latest
-            python-version: 'pypy-3.6'
-          - os: macos-10.15
-            python-version: 'pypy-3.6'
-          - os: macos-11
-            python-version: 'pypy-3.6'
-          - os: macos-12
-            python-version: 'pypy-3.6'
+          # Only do pypy 3.7 on Linux
           - os: macos-latest
             python-version: 'pypy-3.7'
           - os: macos-10.15
@@ -37,37 +32,86 @@ jobs:
             python-version: 'pypy-3.7'
           - os: macos-12
             python-version: 'pypy-3.7'
+          - os: windows-latest
+            python-version: 'pypy-3.7'
+          # Doesn't work yet.
+          - os: macos-10.15
+            python-version: '3.10'
+          - os: macos-11
+            python-version: '3.10'
+          - os: macos-12
+            python-version: '3.10'
+          - os: macos-latest
+            python-version: '3.10'
+          - os: macos-latest
+            python-version: 3.9
+          - os: macos-10.15
+            python-version: 3.9
+          - os: macos-latest
+            python-version: 3.8
+          - os: macos-10.15
+            python-version: 3.8
+          # Not sure about 3.11 passing yet.
+          - os: macos-latest
+            python-version: '3.11'
+          - os: macos-12
+            python-version: '3.11'
+          - os: macos-11
+            python-version: '3.11'
+          - os: macos-10.15
+            python-version: '3.11'
+          - os: windows-latest
+            python-version: '3.11'
     runs-on:  ${{ matrix.os }}
     name: ${{ matrix.os }} @ ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - run: |
-           if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt install liblzo2-dev
-           else
-              echo "$RUNNER_OS uses included lzo source"
-              echo PWD: `pwd`
-              echo LS lzo
-              ls -l lzo-2.10/
-              echo LS lzo include
-              ls -l lzo-2.10/include/
-              cd lzo-2.10
-              ./configure --enable-shared --disable-dependency-tracking --prefix=`pwd`
-              make
-              make test &> test_results
-              make install
-              cd ..
-              ls -l lzo-2.10/
-              find ./lzo-2.10/ -name "*lzo2*"
-           fi
-           echo LZO SETUP DONE
+      - name: Linux install LZO
+        if: runner.os == 'Linux'
+        run: sudo apt install liblzo2-dev
+      - name: macos install LZO
+        if: runner.os == 'macOS'
+        run: |
+          echo "$RUNNER_OS uses included lzo source"
+          echo PWD: `pwd`
+          echo LS lzo
+          ls -l lzo-2.10/
+          echo LS lzo include
+          ls -l lzo-2.10/include/
+          cd lzo-2.10
+          ./configure --enable-shared --disable-dependency-tracking --prefix=`pwd`
+          make
+          make test &> test_results
+          make install
+          cd ..
+          ls -l lzo-2.10/
+          find ./lzo-2.10/ -name "*lzo2*"
+      - name: Add msbuild to PATH
+        if: runner.os == 'Windows'
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: x64
+      - name: Setup LZO Windows
+        if: runner.os == 'Windows'
+        run: |
+          pwd
+          cd lzo-2.10
+          mkdir build
+          cd build
+          cmake ..
+          pwd
+      - name: build LZO Windows
+        if: runner.os == 'Windows'
+        working-directory: .\lzo-2.10\build
+        run: msbuild lzo_static_lib.vcxproj -p:Configuration=Release -p:Platform=x64 -p:OutDir=..\
       - run: python setup.py install
       - run: pip install pytest wheel
       - run: pytest --doctest-modules tests/
       - run: ls -l
+        if: runner.os != 'Windows'
       - run: python setup.py sdist bdist_wheel

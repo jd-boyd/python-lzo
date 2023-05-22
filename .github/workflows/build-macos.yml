@@ -1,0 +1,48 @@
+name: Build wheels for macOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-w64:
+    runs-on: macos-12
+    defaults:
+      run:
+        shell: cmd
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8"]
+#        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    name: ${{ matrix.python-version }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - name: Run cmake
+        working-directory: ./lzo-2.10
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+      - name: Build lzo static lib
+        working-directory: ./lzo-2.10/build
+        run: make
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - name: Build wheel
+        env:
+          LZO_DIR: ./lzo-2.10
+        run: |
+          python -m pip install -U pip
+          python -m pip install -U wheel
+          python setup.py bdist_wheel
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: dist
+          if-no-files-found: error
