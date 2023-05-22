@@ -6,9 +6,6 @@ on:
 jobs:
   build-w64:
     runs-on: macos-12
-    defaults:
-      run:
-        shell: cmd
     strategy:
       matrix:
         python-version: ["3.7", "3.8"]
