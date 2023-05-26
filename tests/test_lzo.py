@@ -144,8 +144,9 @@ def test_lzo_big_raw():
     gen_raw(b" " * 131072)
 
 
-if sys.maxsize > 1<<32:
+if sys.maxsize > 1<<32 and sys.implementation.name != "pypy":
     # This test raises OverflowError on 32-bit Pythons. Compressing
     # this much data requires a 64-bit system.
+    # On PyPy it raises MemoryError.
     def test_lzo_compress_extremely_big():
         b = lzo.compress(bytes(bytearray((1024**3)*2)))

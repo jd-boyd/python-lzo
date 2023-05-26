@@ -1,6 +1,4 @@
-![example workflow](https://github.com/jd-boyd/python-lzo/actions/workflows/tests.yaml/badge.svg)
-
-[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/jd-boyd/python-lzo?svg=true)](https://ci.appveyor.com/project/jd-boyd/python-lzo/branch/master)
+[![Build and tests](https://github.com/jd-boyd/python-lzo/actions/workflows/wheels.yml/badge.svg)](https://github.com/jd-boyd/python-lzo/actions/workflows/wheels.yml)
 
 ```
                  Python-LZO -- Python bindings for LZO
@@ -34,52 +32,45 @@ Python strings.
 
 # Installation
 
-## Ubuntu/Debian Linux
+```
+pip install python-lzo
+```
+Or explicitly from source,
+either from a specific release or from the repo (requires build tools):
+```
+pip install python-lzo-x.y.tar.gz
+pip install https://[...]/python-lzo-x.y.tar.gz
+pip install git+https://github.com/jd-boyd/python-lzo
+```
 
-You need the following dependencies installed:
-* `zlib1g-dev`
-* `liblzo2-dev`
-* `python-pip` or `python3-pip`
+# Building from source
 
-Then, just `pip install python-lzo`.
+Building from source requires build tools. On most Linux distributions
+they are probably already installed. On Windows you need
+[Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+(which should already be installed if you have Visual Studio).
+On macOS you need XCode installed, or something else that provides a suitable C
+compiler. Then either `git clone`, or download a source distribution and untar it.
+Once you are in the root of the project directory where `pyproject.toml` is located,
+run `python -m build -w`. This should build a wheel in the `dist` directory.
+You might need to install `build` with `pip install build`.
 
-## CentOS/Red Hat Enterprise Linux
+To build wheels targeting Python 3.6 or lower you should use v1.15 because
+in newer versions of the project, the metadata has moved from `setup.py` to
+`pyproject.toml` and these Python versions are not compatible with newer releases
+of `pip` that correctly support `pyproject.toml`-based builds. You could also
+manually move that metadata back to `setup.py`.
 
-You need the following dependencies installed:
-
-* `yum install epel-release`
-* `yum install python-pip`
-* `yum install lzo-devel`
-* `yum install lzo-minilzo`
-
-Then, just `pip install python-lzo`.
-
-## macOS
-
-You need XCode installed, or something else that provides suitable C
-compiler.  Then just:
-
-`pip install python-lzo`
-
-## Windows
-
-There is an issue filed to provide a pre-compiled wheel to greatly
-simplify this.
-
-Until then, here we go:
-* Download http://www.oberhumer.com/opensource/lzo/download/lzo-2.09.tar.gz
-* extract that file to `c:\src\` (should produce `c:\src\lzo-2.09` )
-* Install a visual studio compatible with your python build.  If you are using
-  python 2.7, MS has a package just for you at: https://www.microsoft.com/en-us/download/details.aspx?id=44266
-  Current automated tests are done with Visual Studio 2013, but newer should work as well.
-* `python.exe setup.py install`
+If you really want to build a wheel for Python 2.7 on Windows you'll need the
+[Microsoft Visual C++ Compiler for Python 2.7](https://web.archive.org/web/20210116063838/https://www.microsoft.com/en-us/download/details.aspx?id=44266).
 
 # Where's the documentation ?
 
-Python-LZO comes with built-in documentation which is accessible
-using `lzo.__doc__` and `lzo.func__doc__`. See ["Chapter 3: Data Model"
-in the Python Reference Manual](https://docs.python.org/3.6/reference/datamodel.html) for more information.
-
+Python-LZO comes with built-in documentation which is accessible using
+```py
+>>> import lzo
+>>> help(lzo)
+```
 Additionally you should read the docs and study the example
 programs that ship with the LZO library.
 
@@ -90,13 +81,13 @@ Python 2.7, please stick with version 1.14.
 
 # Notes
 
-The Windows version is tested.
-
-It is not currently continuously tested on OSX, but that is coming.
+Wheels are built with [cibuildwheel](https://cibuildwheel.readthedocs.io/)
+on GitHub Actions. Tests are run for all combinations of platform and
+Python version that it can run tests for.
 
 # Releasing
 
-1. Update version in `setup.py` and the `MODULE_VERSION` define in
+1. Update version in `pyproject.toml` and the `MODULE_VERSION` define in
    `lzomodule.c`.
 1. Update NEWS.
 1. Tag with new release.
