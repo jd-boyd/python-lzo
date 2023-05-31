@@ -55,12 +55,6 @@ Once you are in the root of the project directory where `pyproject.toml` is loca
 run `python -m build -w`. This should build a wheel in the `dist` directory.
 You might need to install `build` with `pip install build`.
 
-To build wheels targeting Python 3.6 or lower you should use v1.15 because
-in newer versions of the project, the metadata has moved from `setup.py` to
-`pyproject.toml` and these Python versions are not compatible with newer releases
-of `pip` that correctly support `pyproject.toml`-based builds. You could also
-manually move that metadata back to `setup.py`.
-
 If you really want to build a wheel for Python 2.7 on Windows you'll need the
 [Microsoft Visual C++ Compiler for Python 2.7](https://web.archive.org/web/20210116063838/https://www.microsoft.com/en-us/download/details.aspx?id=44266).
 
@@ -76,8 +70,8 @@ programs that ship with the LZO library.
 
 # Python 2 support statement
 
-As of 1.15, Python 2.x is unsupported. To continue using Python 2.6 or
-Python 2.7, please stick with version 1.14.
+Python 2.7 is still supported but without being a priority.
+Support will be dropped soon.
 
 # Notes
 
@@ -87,8 +81,8 @@ Python version that it can run tests for.
 
 # Releasing
 
-1. Update version in `pyproject.toml` and the `MODULE_VERSION` define in
-   `lzomodule.c`.
+1. Update version in `pyproject.toml`, `setup.py` and the `MODULE_VERSION`
+    define in `lzomodule.c`.
 1. Update NEWS.
 1. Tag with new release.
 1. wheels (download from github actions)
