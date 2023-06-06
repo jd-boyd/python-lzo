@@ -86,7 +86,7 @@ def gen_all(src):
             raise lzo.error("internal error 1: %r %r", src, u1)
         if a0 != a1:
             raise lzo.error("internal error 2")
-        print(f"compressed using {algo} {len(src): 6} -> {len(c): 6}")
+        print("compressed using {} {:6} -> {:6}".format(algo, len(src), len(c)))
 
 
 def gen_raw(src, level=1):
@@ -144,8 +144,16 @@ def test_lzo_big_raw():
     gen_raw(b" " * 131072)
 
 
-if sys.maxsize > 1<<32:
+def is_pypy():
+    if sys.version_info >= (3, 3):
+        return sys.implementation.name == "pypy"
+    else:
+        return "pypy" in sys.version.lower()
+
+
+if sys.maxsize > 1<<32 and not is_pypy():
     # This test raises OverflowError on 32-bit Pythons. Compressing
     # this much data requires a 64-bit system.
+    # On PyPy it raises MemoryError.
     def test_lzo_compress_extremely_big():
         b = lzo.compress(bytes(bytearray((1024**3)*2)))

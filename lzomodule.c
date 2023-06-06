@@ -113,7 +113,11 @@ compress(PyObject *dummy, PyObject *args, PyObject *kwds)
 
     /* init */
     UNUSED(dummy);
+#if PY_VERSION_HEX >= 0x03030000
     if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#|ii$s", argnames, &in, &len, &level, &header, &algorithm))
+#else
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#|iis", argnames, &in, &len, &level, &header, &algorithm))
+#endif
         return NULL;
     if (len < 0)
         return NULL;
@@ -309,7 +313,11 @@ decompress(PyObject *dummy, PyObject *args, PyObject *kwds)
 
     /* init */
     UNUSED(dummy);
+#if PY_VERSION_HEX >= 0x03030000
     if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#|ii$s", argnames, &in, &len, &header, &buflen, &algorithm))
+#else
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#|iis", argnames, &in, &len, &header, &buflen, &algorithm))
+#endif
         return NULL;
     if (header) {
         if (len < 5 + 3 || in[0] < 0xf0 || in[0] > 0xf1)
