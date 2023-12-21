@@ -106,8 +106,12 @@ def gen_raw(src, level=1):
     print("compressed %6d -> %6d" % (len(src), len(c)))
 
 def test_version():
-    import pkg_resources
-    pkg_version = pkg_resources.require("python-lzo")[0].version
+    if sys.version_info >= (3, 10):
+        from importlib.metadata import version
+        pkg_version = version("python-lzo")
+    else:
+        import pkg_resources
+        pkg_version = pkg_resources.require("python-lzo")[0].version
     mod_version = lzo.__version__.decode('utf-8')
     assert pkg_version == mod_version, \
         "%r != %r" %(pkg_version, mod_version)

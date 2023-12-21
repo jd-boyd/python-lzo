@@ -31,7 +31,7 @@
 
 
 import os, sys
-from distutils.util import get_platform
+from sysconfig import get_platform
 
 #
 # prepare sys.path in case we are still in the build directory
