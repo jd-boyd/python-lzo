@@ -45,8 +45,10 @@ setup(
     ext_modules=[
         Extension(
             name="lzo",
-            sources=["lzomodule.c"] + glob(os.path.join(lzo_dir, "src/*.c")),
+            sources=["lzomodule.c"], # + glob(os.path.join(lzo_dir, "src/*.c")),
             include_dirs=[os.path.join(lzo_dir, "include")],
+            libraries=['lzo2'],
+            library_dirs=[os.path.join(lzo_dir, "lib")],
             #extra_link_args=["-flat_namespace"] if sys.platform == "darwin" else [],
         )
     ],
