@@ -5,3 +5,20 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "python-lzo"
+version = "1.15"
+authors = [
+  { name="Markus F.X.J. Oberhumer", email="markus@oberhumer.com" },
+  { name="Joshua D. Boyd", email="jdboyd@jdboyd.net" },
+
+]
+description = "Python bindings for the LZO data compression library"
+readme = "README.rst"
+requires-python = ">=3.7"
+#dynamic = ["keywords"]
+license = {text = "GPL"}
+
+[project.urls]
+"Homepage" = "https://github.com/jd-boyd/python-lzo"
+"Bug Tracker" = "https://github.com/jd-boyd/python-lzo/issues"

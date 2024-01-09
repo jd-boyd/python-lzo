@@ -124,7 +124,4 @@ competitive compression ratio while still decompressing at
 this very high speed.""",
 )
 
-if distutils.__version__ >= "1.0.2":
-    setup_args["platforms"] = "All"
-
 setup(**setup_args)
