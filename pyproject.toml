@@ -32,6 +32,7 @@ test = ["pytest"]
 
 [project.urls]
 Homepage = "https://github.com/jd-boyd/python-lzo"
+"Bug Tracker" = "https://github.com/jd-boyd/python-lzo/issues"
 
 [tool.cibuildwheel]
 archs = ["all"]
