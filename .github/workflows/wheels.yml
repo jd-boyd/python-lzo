@@ -42,7 +42,7 @@ jobs:
             with:
                 platforms: all
           - name: Build and test wheels
-            uses: pypa/cibuildwheel@v2.12.3
+            uses: pypa/cibuildwheel@v2.16.2
             env:
                 CIBW_BUILD: "*${{ matrix.arch }}"
           - name: Upload wheels
