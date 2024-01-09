@@ -28,6 +28,10 @@ class TestCommand(Command):
 
 lzo_dir = os.environ.get("LZO_DIR", "lzo-2.10")  # Relative path.
 
+src_list = ["lzomodule.c"]
+if sys.platform == "win32":
+    src_list += glob(os.path.join(lzo_dir, "src/*.c"))
+
 setup(
     name="python-lzo",
     version="1.16",
@@ -45,9 +49,9 @@ setup(
     ext_modules=[
         Extension(
             name="lzo",
-            sources=["lzomodule.c"], # + glob(os.path.join(lzo_dir, "src/*.c")),
+            sources=src_list,
             include_dirs=[os.path.join(lzo_dir, "include")],
-            libraries=['lzo2'],
+            libraries=['lzo2'] if not sys.platform == "win32" else [],
             library_dirs=[os.path.join(lzo_dir, "lib")],
             #extra_link_args=["-flat_namespace"] if sys.platform == "darwin" else [],
         )
