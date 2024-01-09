@@ -47,7 +47,7 @@ setup(
             name="lzo",
             sources=["lzomodule.c"] + glob(os.path.join(lzo_dir, "src/*.c")),
             include_dirs=[os.path.join(lzo_dir, "include")],
-            extra_link_args=["-flat_namespace"] if sys.platform == "darwin" else [],
+            #extra_link_args=["-flat_namespace"] if sys.platform == "darwin" else [],
         )
     ],
     long_description="""
