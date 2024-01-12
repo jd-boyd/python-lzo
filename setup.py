@@ -30,7 +30,7 @@ lzo_dir = os.environ.get("LZO_DIR", "lzo-2.10")  # Relative path.
 
 setup(
     name="python-lzo",
-    version="1.15",
+    version="1.16",
     description="Python bindings for the LZO data compression library",
     author="Markus F.X.J. Oberhumer",
     author_email="markus@oberhumer.com",
