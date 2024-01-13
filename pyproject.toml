@@ -39,4 +39,4 @@ archs = ["all"]
 build-verbosity = 3
 test-requires = "pytest"
 test-command = "pytest {package}/tests"
-test-skip = "*-win_arm64 *-macosx_arm64 *-macosx_universal2:arm64"
+test-skip = "*-win_arm64"
