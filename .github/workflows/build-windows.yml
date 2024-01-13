@@ -18,13 +18,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           persist-credentials: false
-      - name: Download lzo and extract it
-        run: |
-          if not exist C:\src\ (md C:\src)
-          if not exist C:\src\lzo-2.10.tar.gz (curl -fsS http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz -o C:\src\lzo-2.10.tar.gz)
-          python tarxfz.py
       - name: Run cmake
-        working-directory: C:\src\lzo-2.10
+        working-directory: .\lzo-2.10
         run: |
           md build
           cd build
@@ -34,8 +29,8 @@ jobs:
         with:
           msbuild-architecture: x64
       - name: Build lzo static lib
-        working-directory: C:\src\lzo-2.10\build
-        run: msbuild lzo_static_lib.vcxproj -p:Configuration=Release;Platform=x64;OutDir=C:\src\lzo-2.10
+        working-directory: .\lzo-2.10\build
+        run: msbuild lzo_static_lib.vcxproj -p:Configuration=Release;Platform=x64;OutDir=..\
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -43,7 +38,7 @@ jobs:
           architecture: x64
       - name: Build wheel
         env:
-          LZO_DIR: C:\src\lzo-2.10
+          LZO_DIR: .\lzo-2.10
         run: |
           python -m pip install -U pip wheel build
           python -m build
