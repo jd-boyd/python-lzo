@@ -32,6 +32,21 @@ Python strings.
 
 # Installation
 
+## Pre-reqs
+
+On linux, you will want to install `liblzo2-dev` or your distributions equivelent.
+
+```bash
+sudo apt install liblzo2-dev
+```
+or
+```bash
+sudo yum install liblzo2-devel
+```
+and the two most likely ways.
+
+## Actual Install
+
 ```
 pip install python-lzo
 ```
