@@ -15,7 +15,7 @@ jobs:
     name: ${{ matrix.python-version }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: Run cmake
@@ -43,7 +43,7 @@ jobs:
           python -m pip install -U pip wheel build
           python -m build
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: wheels
           path: dist

@@ -40,3 +40,4 @@ build-verbosity = 3
 test-requires = "pytest"
 test-command = "pytest {package}/tests"
 test-skip = "*-win_arm64"
+skip = "*t-win*"  # Skip free-threaded Python builds on Windows

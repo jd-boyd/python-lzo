@@ -9,60 +9,32 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - 3.7
           - 3.8
           - 3.9
           - "3.10"
           - 3.11
           - 3.12
-          - pypy-3.7
+          - 3.13
+          - pypy-3.8
         os:
           - ubuntu-latest
-          - macos-12
           - macos-latest
           - windows-latest
         exclude:
-          # Only do pypy 3.7 on Linux
-          - os: macos-latest
-            python-version: 'pypy-3.7'
-          - os: macos-10.15
-            python-version: 'pypy-3.7'
-          - os: macos-11
-            python-version: 'pypy-3.7'
-          - os: macos-12
-            python-version: 'pypy-3.7'
-          - os: windows-latest
-            python-version: 'pypy-3.7'
-          # Doesn't work yet.
-          - os: macos-10.15
-            python-version: '3.10'
-          - os: macos-11
-            python-version: '3.10'
-          - os: macos-12
-            python-version: '3.10'
           - os: macos-latest
             python-version: '3.10'
           - os: macos-latest
             python-version: 3.9
-          - os: macos-10.15
-            python-version: 3.9
           - os: macos-latest
             python-version: 3.8
-          - os: macos-10.15
-            python-version: 3.8
-          # Not sure about 3.11 passing yet.
           - os: macos-latest
             python-version: '3.11'
-          - os: macos-12
-            python-version: '3.11'
-          - os: macos-11
-            python-version: '3.11'
-          - os: macos-10.15
-            python-version: '3.11'
+          - os: macos-latest
+            python-version: 'pypy-3.8'
     runs-on:  ${{ matrix.os }}
     name: ${{ matrix.os }} @ ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -112,10 +84,11 @@ jobs:
       - run: ls -l
         if: runner.os != 'Windows'
       - run: python -m build
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: wheels
-          path: dist
-          if-no-files-found: error
-          retention-days: 30
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     overwrite: True
+      #     name: wheels
+      #     path: dist
+      #     if-no-files-found: error
+      #     retention-days: 30
