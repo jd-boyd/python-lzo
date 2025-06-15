@@ -5,14 +5,14 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-12
+    runs-on: macos-14
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
     name: ${{ matrix.python-version }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: Run cmake
@@ -36,7 +36,7 @@ jobs:
           python -m pip install -U pip wheel build
           python -m build
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: wheels
           path: dist
