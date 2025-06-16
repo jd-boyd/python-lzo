@@ -329,9 +329,18 @@ decompress(PyObject *dummy, PyObject *args, PyObject *kwds)
             goto header_error;
     }
     else {
-        if (buflen < 0) return PyErr_Format(LzoError, "Argument buflen required for headerless decompression");
-        out_len = buflen;
-        in_len = len;
+        if (buflen < 0){
+            if (-buflen > len){ // try decompress with unknown size, -buflen is guess size
+                  out_len = -buflen;
+                  in_len = len;
+            }else{
+                  return PyErr_Format(LzoError, "Argument buflen required for headerless decompression");
+            }
+        }
+        else{
+            out_len = buflen;
+            in_len = len;
+        }
     }
 
     /* init for different algorithms*/
@@ -393,6 +402,10 @@ decompress(PyObject *dummy, PyObject *args, PyObject *kwds)
     err = (*decompress_ptr)(in, in_len, out, &new_len, NULL);
     Py_END_ALLOW_THREADS
 
+    if (buflen < 0 && new_len > 0){ // reutrn try it's best size
+        _PyString_Resize(&result_str, new_len);
+        return result_str;
+    }
     if (err != LZO_E_OK || (header && new_len != out_len) )
     {
         Py_DECREF(result_str);
