@@ -155,7 +155,7 @@ jobs:
                 # Build sdist on lowest supported Python.
                 # 3.8 is used because 3.6 has issues with pyproject.toml
                 # and 3.7 has bpo-41316.
-                python-version: '3.8'
+                python-version: '3.11'
           - name: Build sdist
             run: |
                 python -m pip install -U pip
