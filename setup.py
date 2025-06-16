@@ -43,7 +43,6 @@ setup(
             include_dirs=[os.path.join(lzo_dir, "include")],
             libraries=['lzo2'] if not sys.platform == "win32" else [],
             library_dirs=[os.path.join(lzo_dir, "lib")],
-            #extra_link_args=["-flat_namespace"] if sys.platform == "darwin" else [],
         )
     ],
 )

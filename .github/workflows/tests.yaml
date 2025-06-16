@@ -20,14 +20,15 @@ jobs:
           - macos-latest
           - windows-latest
         exclude:
+          # Save time
           - os: macos-latest
-            python-version: '3.10'
+            python-version: '3.12'
+
+          # Both of these have trouble setting up that python on macos.
           - os: macos-latest
-            python-version: 3.9
+            python-version: '3.9'
           - os: macos-latest
-            python-version: '3.11'
-          - os: macos-latest
-            python-version: 'pypy-3.8'
+            python-version: 'pypy-3.9'
     runs-on:  ${{ matrix.os }}
     name: ${{ matrix.os }} @ ${{ matrix.python-version }}
     steps:
