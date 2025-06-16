@@ -1,13 +1,96 @@
 name: Build and test wheels
 
 on:
-    workflow_dispatch:
-    push:
-        tags:
-            - v*
+  workflow_dispatch:
+  push:
+    tags:
+      - v*
 
 jobs:
-    wheels:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - 3.8
+          - 3.9
+          - "3.10"
+          - 3.11
+          - 3.12
+          - 3.13
+          - pypy-3.8
+          - pypy-3.9
+          - pypy-3.10
+          - pypy-3.11
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        exclude:
+          - os: macos-latest
+            python-version: 'pypy-3.8'
+          - os: macos-latest
+            python-version: 'pypy-3.9'
+          - os: macos-latest
+            python-version: 'pypy-3.10'
+          - os: macos-latest
+            python-version: 'pypy-3.11'
+
+    runs-on:  ${{ matrix.os }}
+    name: ${{ matrix.os }} @ ${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - name: Linux install LZO
+        if: runner.os == 'Linux'
+        run: sudo apt install liblzo2-dev
+      - name: macos install LZO
+        if: runner.os == 'macOS'
+        run: |
+          echo "$RUNNER_OS uses included lzo source"
+          echo PWD: `pwd`
+          echo LS lzo
+          ls -l lzo-2.10/
+          echo LS lzo include
+          ls -l lzo-2.10/include/
+          cd lzo-2.10
+          ./configure --enable-shared --disable-dependency-tracking --prefix=`pwd`
+          make
+          make test &> test_results
+          make install
+          cd ..
+          ls -l lzo-2.10/
+          find ./lzo-2.10/ -name "*lzo2*"
+      - name: Add msbuild to PATH
+        if: runner.os == 'Windows'
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: x64
+      - name: Setup LZO Windows
+        if: runner.os == 'Windows'
+        run: |
+          pwd
+          cd lzo-2.10
+          mkdir build
+          cd build
+          cmake ..
+          pwd
+      - name: build LZO Windows
+        if: runner.os == 'Windows'
+        working-directory: .\lzo-2.10\build
+        run: msbuild lzo_static_lib.vcxproj -p:Configuration=Release -p:Platform=x64 -p:OutDir=..\
+      - run: pip install -e ./
+      - run: pip install pytest build
+      - run: pytest --doctest-modules tests/
+      - run: ls -l
+        if: runner.os != 'Windows'
+      - run: python -m build
+  wheels:
+        needs: [tests,]
         name: Build wheels on ${{ matrix.os }} for ${{ matrix.arch }}
         runs-on: ${{ matrix.os }}
         strategy:
@@ -59,7 +142,8 @@ jobs:
                 path: wheelhouse/*.whl
                 if-no-files-found: error
 
-    sdist:
+  sdist:
+        needs: [tests,]
         name: Build sdist
         runs-on: ubuntu-latest
         steps:
@@ -86,7 +170,7 @@ jobs:
                 path: dist/*
                 if-no-files-found: error
 
-    publish:
+  publish:
         name: Publish builds on PyPI
         runs-on: ubuntu-latest
         needs: [sdist, wheels]
