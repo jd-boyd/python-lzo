@@ -10,7 +10,7 @@ name = "python-lzo"
 version = "1.16"
 description = "Python bindings for the LZO data compression library"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [
     {name = "Markus F.X.J. Oberhumer", email = "markus@oberhumer.com"},
 ]
@@ -40,4 +40,3 @@ build-verbosity = 3
 test-requires = "pytest"
 test-command = "pytest {package}/tests"
 test-skip = "*-win_arm64"
-skip = "*t-win*"  # Skip free-threaded Python builds on Windows

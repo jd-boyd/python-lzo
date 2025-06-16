@@ -34,13 +34,6 @@ if sys.platform == "win32":
 
 setup(
     name="python-lzo",
-    version="1.16",
-    description="Python bindings for the LZO data compression library",
-    author="Markus F.X.J. Oberhumer",
-    author_email="markus@oberhumer.com",
-    maintainer="Joshua D. Boyd",
-    maintainer_email="jdboyd@jdboyd.net",
-    url="https://github.com/jd-boyd/python-lzo",
     license="GNU General Public License (GPL)",
     tests_require=['pytest'],
     cmdclass={
@@ -53,7 +46,6 @@ setup(
             include_dirs=[os.path.join(lzo_dir, "include")],
             libraries=['lzo2'] if not sys.platform == "win32" else [],
             library_dirs=[os.path.join(lzo_dir, "lib")],
-            #extra_link_args=["-flat_namespace"] if sys.platform == "darwin" else [],
         )
     ],
     long_description="""
