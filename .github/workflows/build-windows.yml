@@ -5,13 +5,15 @@ on:
 
 jobs:
   build-w64:
-    runs-on: windows-2022
+    runs-on:
+      - windows-latest
+      #x- windows-latest-arm64
     defaults:
       run:
         shell: cmd
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
     name: ${{ matrix.python-version }}
     steps:
       - name: Checkout repo
@@ -26,8 +28,8 @@ jobs:
           cmake ..
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.1
-        with:
-          msbuild-architecture: x64
+        # with:
+        #   msbuild-architecture: x64
       - name: Build lzo static lib
         working-directory: .\lzo-2.10\build
         run: msbuild lzo_static_lib.vcxproj -p:Configuration=Release;Platform=x64;OutDir=..\
@@ -35,7 +37,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
+#          architecture: x64
       - name: Build wheel
         env:
           LZO_DIR: .\lzo-2.10
