@@ -1,0 +1,51 @@
+name: Build wheels for Linux
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubunt-latest
+    strategy:
+      matrix:
+        python-version:
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+    name: ${{ matrix.python-version }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Run cmake
+        working-directory: ./lzo-2.10
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_INSTALL_PREFIX=.. ..
+      - name: Build lzo static lib
+        working-directory: ./lzo-2.10/build
+        run: |
+          make
+          make install
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Build wheel
+        env:
+          LZO_DIR: ./lzo-2.10
+        run: |
+          python -m pip install -U pip wheel build
+          python -m build
+          ls -l dist
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-linux
+          path: dist
+          overwrite: true
+          if-no-files-found: error
