@@ -24,6 +24,9 @@ jobs:
           - os: macos-latest
             python-version: '3.12'
 
+          # Trouble with free threading.
+          - os: windows-latest
+            python-version: '3.13'
           # Both of these have trouble setting up that python on macos.
           - os: macos-latest
             python-version: '3.9'
