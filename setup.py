@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 import shutil
-from pathlib import Path
+import pathlib
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 
@@ -98,12 +98,22 @@ class CMakeBuild(build_ext):
             subprocess.check_call(
                 ["cmake", "--build", "."] + build_args, cwd=build_temp
             )
+            extension_path = pathlib.Path(self.get_ext_fullpath(ext.name))
+            print("COOKIES!!!!!")
+            print("N: ", ext.name)
+            print("GEF: ", self.get_ext_fullpath(ext.name))
+            _, file_ext = os.path.splitext(self.get_ext_fullpath(ext.name))
+            print("EXT_2: ", file_ext)
+            src = build_temp + file_ext
+            print("  shutil.copy(", src, ", ", extension_path, ")")
+
+            shutil.copy(src, extension_path)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"CMake build failed: {e}")
 
 
 # Read the contents of your README file
-this_directory = Path(__file__).parent
+this_directory = pathlib.Path(__file__).parent
 readme_file = this_directory / "README.md"
 if readme_file.exists():
     long_description = readme_file.read_text(encoding="utf-8")
