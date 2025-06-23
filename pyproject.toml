@@ -10,13 +10,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "python-lzo"
-version = "1.15"
+version = "1.16"
 description = "Python bindings for the LZO compression library"
 authors = [
     {name = "Markus F.X.J. Oberhumer", email = "markus@oberhumer.com"}
 ]
+maintainers = [
+    {name = "Joshua D. Boyd", email = "jdboyd@jdboyd.net"},
+]
 readme = "README.md"
-license = {text = "GPL-2.0"}
+license = "GPL-2.0"
 requires-python = ">=3.8"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -28,6 +31,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: C",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: System :: Archiving :: Compression",
@@ -38,19 +42,15 @@ keywords = ["lzo", "compression"]
 dev = [
     "pytest>=6.0",
     "pytest-cov",
-    "black",
-    "flake8",
-    "mypy",
 ]
 test = [
     "pytest>=6.0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/python-lzo"
-Repository = "https://github.com/yourusername/python-lzo"
-Issues = "https://github.com/yourusername/python-lzo/issues"
-Documentation = "https://python-lzo.readthedocs.io/"
+Homepage = "https://github.com/jd-boyd/python-lzo"
+Repository = "https://github.com/jd-boyd-lzo"
+Issues = "https://github.com/jd-boyd-lzo/issues"
 
 [tool.setuptools]
 packages = []  # No Python packages, just C extension
@@ -58,33 +58,8 @@ packages = []  # No Python packages, just C extension
 [tool.setuptools.package-data]
 "*" = ["*.so", "*.pyd", "*.dll"]
 
-# Black code formatting
-[tool.black]
-line-length = 88
-target-version = ['py38']
-
 # Pytest configuration
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-v"
-
-# MyPy type checking
-[tool.mypy]
-python_version = "3.8"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-
-# Coverage configuration
-[tool.coverage.run]
-source = ["lzo"]
-omit = ["*/tests/*"]
-
-[tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "raise AssertionError",
-    "raise NotImplementedError",
-]
