@@ -5,7 +5,6 @@ import shutil
 from pathlib import Path
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
-import pybind11
 
 
 class CMakeExtension(Extension):
@@ -41,7 +40,6 @@ class CMakeBuild(build_ext):
             f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
             f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
-            f"-DPYBIND11_PYTHON_VERSION={sys.version_info.major}.{sys.version_info.minor}",
             f"-DUSE_SYSTEM_LZO={use_system_lzo}",
         ]
 
@@ -75,8 +73,6 @@ class CMakeBuild(build_ext):
             # using -j in the build_ext call, not supported by pip or PyPA-build.
             if hasattr(self, "parallel") and self.parallel:
                 build_args += [f"-j{self.parallel}"]
-
-        cmake_args += [f"-DPYBIND11_INCLUDE_DIR={pybind11.get_include()}"]
 
         build_temp = os.path.join(self.build_temp, ext.name)
         if not os.path.exists(build_temp):
@@ -120,8 +116,6 @@ if not (this_directory / "lzomodule.c").exists():
     raise RuntimeError("lzomodule.c not found in project root")
 
 setup(
-    cmdclass={
-        "build_ext": CMakeBuild,
-    },
     ext_modules=[CMakeExtension("lzo")],
+    cmdclass={"build_ext": CMakeBuild},
 )
