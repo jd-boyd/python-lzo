@@ -2,7 +2,13 @@ name: Build wheels for Windows x64
 
 on:
   workflow_dispatch:
-
+    inputs:
+      custom_ref:
+        description: 'custom ref/tag'
+        required: false
+      do_release:
+        description: 'Creating release from artifacts: type "y" to enable'
+        required: false
 jobs:
   build-w64:
     runs-on:
@@ -27,7 +33,7 @@ jobs:
           cd build
           cmake ..
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v2
         # with:
         #   msbuild-architecture: x64
       - name: Build lzo static lib
@@ -48,7 +54,39 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
-          path: dist
+          name: ${{ github.event.repository.name }}-py${{ matrix.python-version }}
+          path: dist\*.whl
           overwrite: true
           if-no-files-found: error
+
+  release:
+    if: ${{ github.event.inputs.do_release == 'y' && github.event.inputs.custom_ref != '' }}
+    needs: [build-w64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: List all files
+        run: ls -R ./artifacts
+
+      - name: do release
+        run: |
+          gh release create '${{ github.event.inputs.custom_ref}}' \
+            -t '${{ github.event.inputs.custom_ref}}' \
+            --title "${{ github.event.repository.name }}-${{ github.event.inputs.custom_ref}}" \
+            --target '${{ github.ref_name }}' \
+            --latest=true \
+            --generate-notes \
+            --repo ${GITHUB_REPOSITORY}
+          gh release upload '${{ github.event.inputs.custom_ref}}' --repo ${GITHUB_REPOSITORY} --clobber \
+            ./artifacts/*
