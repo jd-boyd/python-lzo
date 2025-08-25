@@ -1,4 +1,4 @@
-name: Build wheels for Windows x64
+name: Build/release wheels for Windows x64
 
 on:
   workflow_dispatch:
