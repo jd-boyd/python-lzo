@@ -91,6 +91,8 @@ jobs:
         if: steps.build_brew.outcome == 'failure'
         working-directory: ./lzo-2.10
         run: |
+          sed -i '' 's/cmake_minimum_required(VERSION [0-9.]* *FATAL_ERROR)/cmake_minimum_required(VERSION 3.5)/' CMakeLists.txt
+          grep cmake_minimum_required CMakeLists.txt
           mkdir build
           cd build
           cmake -DCMAKE_INSTALL_PREFIX=.. ..
