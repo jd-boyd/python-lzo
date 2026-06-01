@@ -1,4 +1,5 @@
 name: "Build wheels for macOS (+optional release)"
+# Hybrid approach: try to build with brew lzo, fall back to included sources
 
 on:
   workflow_dispatch:
