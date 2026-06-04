@@ -42,10 +42,11 @@ jobs:
           LZO_DIR: .\lzo-2.10
         run: |
           python -m pip install -U pip wheel build
-          python -m build
+          python -m build -w --no-isolation
       - name: Smoke-test wheel
+        shell: bash
         run: |
-          pip install dist\*.whl
+          python -m pip install dist/*.whl
           python -c "import lzo; d=b'test'*42; assert lzo.decompress(lzo.compress(d))==d; print('OK')"
       - name: Upload artifact
         uses: actions/upload-artifact@v4
