@@ -29,7 +29,9 @@
  */
 
 
-#define MODULE_VERSION  "1.16"
+#ifndef MODULE_VERSION
+#  define MODULE_VERSION  "unknown"
+#endif
 
 #define PY_SSIZE_T_CLEAN
 
