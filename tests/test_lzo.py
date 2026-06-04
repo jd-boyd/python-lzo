@@ -30,7 +30,6 @@
 ##
 ##---------------------------------------------------------------------------##
 
-from __future__ import print_function
 import inspect
 import pytest
 import sys, string
@@ -112,7 +111,7 @@ def test_version():
     else:
         import pkg_resources
         pkg_version = pkg_resources.require("python-lzo")[0].version
-    mod_version = lzo.__version__.decode('utf-8')
+    mod_version = lzo.__version__
     assert pkg_version == mod_version, \
         "%r != %r" %(pkg_version, mod_version)
 

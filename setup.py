@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # vi:ts=4:et
 
-from __future__ import print_function
-
 import os
 import re
 import shutil
