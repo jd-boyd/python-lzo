@@ -13,12 +13,8 @@ on:
 
 jobs:
   build-wheels-native:
-    name: "native ${{ matrix.arch }}"
+    name: "native x86_64 i686"
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [x86_64, i686]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -26,23 +22,19 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23
         env:
-          CIBW_ARCHS_LINUX: ${{ matrix.arch }}
+          CIBW_ARCHS_LINUX: "x86_64 i686"
           CIBW_TEST_COMMAND: "python -c \"import lzo; d=b'test'*42; assert lzo.decompress(lzo.compress(d))==d\""
 
       - name: Upload wheels
         uses: actions/upload-artifact@v6
         with:
-          name: wheels-linux-${{ matrix.arch }}
+          name: wheels-linux-native
           path: wheelhouse/*.whl
           if-no-files-found: error
 
-  build-wheels-emulated:
-    name: "emulated ${{ matrix.arch }}"
+  build-wheels-aarch64:
+    name: "emulated aarch64"
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [aarch64, ppc64le, s390x, armv7l]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -55,13 +47,88 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23
         env:
-          CIBW_ARCHS_LINUX: ${{ matrix.arch }}
+          CIBW_ARCHS_LINUX: aarch64
           CIBW_TEST_COMMAND: "python -c \"import lzo; d=b'test'*42; assert lzo.decompress(lzo.compress(d))==d\""
 
       - name: Upload wheels
         uses: actions/upload-artifact@v6
         with:
-          name: wheels-linux-${{ matrix.arch }}
+          name: wheels-linux-aarch64
+          path: wheelhouse/*.whl
+          if-no-files-found: error
+
+  build-wheels-ppc64le:
+    name: "emulated ppc64le"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.23
+        env:
+          CIBW_ARCHS_LINUX: ppc64le
+          CIBW_TEST_COMMAND: "python -c \"import lzo; d=b'test'*42; assert lzo.decompress(lzo.compress(d))==d\""
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v6
+        with:
+          name: wheels-linux-ppc64le
+          path: wheelhouse/*.whl
+          if-no-files-found: error
+
+  build-wheels-s390x:
+    name: "emulated s390x"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.23
+        env:
+          CIBW_ARCHS_LINUX: s390x
+          CIBW_TEST_COMMAND: "python -c \"import lzo; d=b'test'*42; assert lzo.decompress(lzo.compress(d))==d\""
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v6
+        with:
+          name: wheels-linux-s390x
+          path: wheelhouse/*.whl
+          if-no-files-found: error
+
+  build-wheels-armv7l:
+    name: "emulated armv7l"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.23
+        env:
+          CIBW_ARCHS_LINUX: armv7l
+          CIBW_TEST_COMMAND: "python -c \"import lzo; d=b'test'*42; assert lzo.decompress(lzo.compress(d))==d\""
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v6
+        with:
+          name: wheels-linux-armv7l
           path: wheelhouse/*.whl
           if-no-files-found: error
 
@@ -90,7 +157,7 @@ jobs:
 
   publish-testpypi:
     name: Publish to TestPyPI
-    needs: [build-wheels-native, build-wheels-emulated, sdist]
+    needs: [build-wheels-native, build-wheels-aarch64, build-wheels-ppc64le, build-wheels-s390x, build-wheels-armv7l, sdist]
     if: inputs.publish_to_testpypi
     runs-on: ubuntu-latest
     environment:
