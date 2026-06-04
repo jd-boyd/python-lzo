@@ -6,13 +6,18 @@
               Copyright (c) 1996-2002 Markus F.X.J. Oberhumer
                           <markus@oberhumer.com>
                  http://www.oberhumer.com/opensource/lzo/
-              Copyright (c) 2011-2016 Joshua D. Boyd
+     Copyright (c) 2011-2026 Joshua D. Boyd (and other contributers)
                           <jdboyd@jdboyd.net>
                  https://github.com/jd-boyd/python-lzo
 ```
 
-# What is LZO ?
+# Maintainer Note
 
+I don't get paid to work on this.  I don't use this in my work currently, and probably won't again.  Maintainance is of the best effort sort. If someone things they can and want to do better, feel free to talk to me, since I'd be happy to hand it off to someone who can convince me they will be a better home.
+
+-- jdboyd
+
+# What is LZO ?
 
 LZO is a portable lossless data compression library written in ANSI C.
 It offers pretty fast compression and *very* fast decompression.
@@ -85,8 +90,15 @@ programs that ship with the LZO library.
 
 # Python 2 support statement
 
-Python 2.7 is still supported but without being a priority.
-Support will be dropped soon.
+Python 2 support is removed.
+
+# Python 3.x support statement
+
+While we aren't going out of our way to drop support for older python 3.xs, we perform testing primarily on non-EOL Python versions. At the time of this writing, that means 3.10 and newer, although we haven't yet taken 3.9 off the test list.
+
+# Python 3.x known to no longer work
+
+This is a new section, and I'm not going to try to test every version right now, so I will say that 3.3 and older is known not to work, I guess 3.4 to 3.8 are currently a mystery.
 
 # Notes
 
@@ -103,6 +115,10 @@ Python version that it can run tests for.
 1. wheels (download from github actions)
 1. Upload to PyPi (`twine upload dist/*`)
 
+# Contribution
+
+Contributors will now be listed in CONTRIBUTERS.md.  Just make a PR on github.
+
 # Copyright
 
 The LZO and Python-LZO algorithms and implementations are
@@ -111,7 +127,7 @@ Markus Franz Xaver Johannes Oberhumer <markus@oberhumer.com>
 
 The Python-LZO algorithms implementated post 2011 are
 Copyright (C) 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
-2022, & 2023
+2022, 2023, 2026
 Joshua D. Boyd <jdboyd@jdboyd.net> and others as denoted in the git
 history.
 
