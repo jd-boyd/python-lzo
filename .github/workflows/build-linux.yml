@@ -12,8 +12,37 @@ on:
       - v*
 
 jobs:
-  build-wheels:
+  build-wheels-native:
+    name: "native ${{ matrix.arch }}"
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, i686]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.23
+        env:
+          CIBW_ARCHS_LINUX: ${{ matrix.arch }}
+          CIBW_TEST_COMMAND: "python -c \"import lzo; d=b'test'*42; assert lzo.decompress(lzo.compress(d))==d\""
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v6
+        with:
+          name: wheels-linux-${{ matrix.arch }}
+          path: wheelhouse/*.whl
+          if-no-files-found: error
+
+  build-wheels-emulated:
+    name: "emulated ${{ matrix.arch }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64, ppc64le, s390x, armv7l]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -26,13 +55,13 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23
         env:
-          CIBW_ARCHS_LINUX: "x86_64 i686 aarch64 ppc64le s390x armv7l"
+          CIBW_ARCHS_LINUX: ${{ matrix.arch }}
           CIBW_TEST_COMMAND: "python -c \"import lzo; d=b'test'*42; assert lzo.decompress(lzo.compress(d))==d\""
 
       - name: Upload wheels
         uses: actions/upload-artifact@v6
         with:
-          name: wheels-linux
+          name: wheels-linux-${{ matrix.arch }}
           path: wheelhouse/*.whl
           if-no-files-found: error
 
@@ -61,7 +90,7 @@ jobs:
 
   publish-testpypi:
     name: Publish to TestPyPI
-    needs: [build-wheels, sdist]
+    needs: [build-wheels-native, build-wheels-emulated, sdist]
     if: inputs.publish_to_testpypi
     runs-on: ubuntu-latest
     environment:
