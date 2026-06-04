@@ -14,6 +14,13 @@ on:
         required: false
         type: string
         default: ""
+      publish_to_testpypi:
+        description: 'Publish wheels to TestPyPI'
+        type: boolean
+        default: false
+  push:
+    tags:
+      - v*
 
 permissions:
   contents: write   # required to create tags, releases
@@ -56,8 +63,8 @@ jobs:
           - "3.13"
           - "3.14"
         os:
-          - macos-14
-          - macos-15 # currently (2026) same as macos-latest
+          - macos-13
+          - macos-latest
     name: "Python ${{ matrix.python-version }}"
     steps:
       - name: Checkout repo
@@ -202,3 +209,24 @@ jobs:
               --title "${TAG}" \
               --generate-notes
           fi
+
+  publish-testpypi:
+    name: Publish to TestPyPI
+    needs: [build]
+    if: inputs.publish_to_testpypi && needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: release
+      url: https://test.pypi.org/p/python-lzo
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          path: dist
+      - run: |
+          mv dist/*/*.whl dist/ 2>/dev/null || true
+          find dist -mindepth 1 -type d -delete
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/

@@ -1,4 +1,4 @@
-name: Build/release wheels for Windows x64
+name: Build/release wheels for Windows
 
 on:
   workflow_dispatch:
@@ -9,59 +9,55 @@ on:
       do_release:
         description: 'Creating release from artifacts: type "y" to enable'
         required: false
+      publish_to_testpypi:
+        description: 'Publish wheels to TestPyPI'
+        type: boolean
+        default: false
+  push:
+    tags:
+      - v*
 jobs:
-  build-w64:
-    runs-on:
-      - windows-latest
-      #x- windows-latest-arm64
+  build:
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         shell: cmd
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-    name: ${{ matrix.python-version }}
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        os: [windows-latest, windows-latest-arm64]
+    name: "${{ matrix.os }} py${{ matrix.python-version }}"
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Run cmake
-        working-directory: .\lzo-2.10
-        run: |
-          md build
-          cd build
-          cmake ..
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v2
-        # with:
-        #   msbuild-architecture: x64
-      - name: Build lzo static lib
-        working-directory: .\lzo-2.10\build
-        run: msbuild lzo_static_lib.vcxproj -p:Configuration=Release;Platform=x64;OutDir=..\
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
-#          architecture: x64
       - name: Build wheel
         env:
           LZO_DIR: .\lzo-2.10
         run: |
           python -m pip install -U pip wheel build
           python -m build
-          ls -l dist
+      - name: Smoke-test wheel
+        run: |
+          pip install dist\*.whl
+          python -c "import lzo; d=b'test'*42; assert lzo.decompress(lzo.compress(d))==d; print('OK')"
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.repository.name }}-py${{ matrix.python-version }}
+          name: ${{ github.event.repository.name }}-${{ matrix.os }}-py${{ matrix.python-version }}
           path: dist\*.whl
           overwrite: true
           if-no-files-found: error
 
   release:
     if: ${{ github.event.inputs.do_release == 'y' && github.event.inputs.custom_ref != '' }}
-    needs: [build-w64]
+    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -90,3 +86,24 @@ jobs:
             --repo ${GITHUB_REPOSITORY}
           gh release upload '${{ github.event.inputs.custom_ref}}' --repo ${GITHUB_REPOSITORY} --clobber \
             ./artifacts/*
+
+  publish-testpypi:
+    name: Publish to TestPyPI
+    needs: [build]
+    if: inputs.publish_to_testpypi
+    runs-on: ubuntu-latest
+    environment:
+      name: release
+      url: https://test.pypi.org/p/python-lzo
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          path: dist
+      - run: |
+          mv dist/*/*.whl dist/ 2>/dev/null || true
+          find dist -mindepth 1 -type d -delete
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
