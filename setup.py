@@ -4,8 +4,10 @@
 from __future__ import print_function
 
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 from glob import glob
 from setuptools import Command, Extension, setup
 
@@ -26,10 +28,37 @@ class TestCommand(Command):
                              "pytest"]))
 
 
+def has_system_lzo2():
+    """Return True if liblzo2 can be compiled and linked against."""
+    if sys.platform == "win32":
+        return False
+    test_c = """
+    #include <lzo/lzo1x.h>
+    int main(void) { return lzo_init() == LZO_E_OK ? 0 : 1; }
+    """
+    tmpdir = tempfile.mkdtemp()
+    try:
+        src = os.path.join(tmpdir, "test.c")
+        out = os.path.join(tmpdir, "test")
+        with open(src, "w") as f:
+            f.write(test_c)
+        cc = os.environ.get("CC", "cc")
+        result = subprocess.run(
+            [cc, "-o", out, src, "-llzo2"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        return result.returncode == 0
+    finally:
+        shutil.rmtree(tmpdir)
+
+
 lzo_dir = os.environ.get("LZO_DIR", "lzo-2.10")  # Relative path.
 
+_use_system_lzo = has_system_lzo2()
+
 src_list = ["lzomodule.c"]
-if sys.platform == "win32":
+if not _use_system_lzo:
     src_list += glob(os.path.join(lzo_dir, "src/*.c"))
 
 setup(
@@ -41,7 +70,7 @@ setup(
             name="lzo",
             sources=src_list,
             include_dirs=[os.path.join(lzo_dir, "include")],
-            libraries=['lzo2'] if not sys.platform == "win32" else [],
+            libraries=['lzo2'] if _use_system_lzo else [],
             library_dirs=[os.path.join(lzo_dir, "lib")],
             #extra_link_args=["-flat_namespace"] if sys.platform == "darwin" else [],
         )
