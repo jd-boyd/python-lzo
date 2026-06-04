@@ -4,12 +4,25 @@
 from __future__ import print_function
 
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
 from glob import glob
 from setuptools import Command, Extension, setup
+
+
+def _get_version():
+    with open("pyproject.toml", "r") as f:
+        for line in f:
+            m = re.match(r'^version\s*=\s*"([^"]+)"', line)
+            if m:
+                return m.group(1)
+    return "unknown"
+
+
+_package_version = _get_version()
 
 
 class TestCommand(Command):
@@ -72,6 +85,7 @@ setup(
             include_dirs=[os.path.join(lzo_dir, "include")],
             libraries=['lzo2'] if _use_system_lzo else [],
             library_dirs=[os.path.join(lzo_dir, "lib")],
+            define_macros=[("MODULE_VERSION", '"%s"' % _package_version)],
             #extra_link_args=["-flat_namespace"] if sys.platform == "darwin" else [],
         )
     ],
