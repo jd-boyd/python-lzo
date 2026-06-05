@@ -2,11 +2,7 @@ name: Build wheels for Linux
 
 on:
   workflow_dispatch:
-    inputs:
-      publish_to_testpypi:
-        description: 'Publish wheels/sdist to TestPyPI'
-        type: boolean
-        default: false
+  workflow_call:
   push:
     tags:
       - v*
@@ -154,25 +150,3 @@ jobs:
           name: sdist
           path: dist/*.tar.gz
           if-no-files-found: error
-
-  publish-testpypi:
-    name: Publish to TestPyPI
-    needs: [build-wheels-native, build-wheels-aarch64, build-wheels-ppc64le, build-wheels-s390x, build-wheels-armv7l, sdist]
-    if: inputs.publish_to_testpypi
-    runs-on: ubuntu-latest
-    environment:
-      name: release
-      url: https://test.pypi.org/p/python-lzo
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/download-artifact@v6
-        with:
-          path: dist
-      - run: |
-          mv dist/*/*.whl dist/ 2>/dev/null || true
-          mv dist/*/*.tar.gz dist/ 2>/dev/null || true
-          find dist -mindepth 1 -type d -delete
-      - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/

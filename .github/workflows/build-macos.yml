@@ -1,62 +1,19 @@
-name: "Build wheels for macOS (+optional release)"
-# Hybrid approach: try to build with brew lzo, fall back to included sources
+name: "Build wheels for macOS"
 
 on:
   workflow_dispatch:
-    inputs:
-      tag:
-        description: >
-          Release tag — optional (e.g. v1.16).
-          Leave blank to build wheels only (no release will be created).
-          Existing tag → wheels are replaced on the existing release.
-          New tag      → git tag is created from HEAD and a new release is published.
-          Format: vMAJOR.MINOR[.PATCH][-prerelease]
-        required: false
-        type: string
-        default: ""
-      publish_to_testpypi:
-        description: 'Publish wheels to TestPyPI'
-        type: boolean
-        default: false
+  workflow_call:
   push:
     tags:
       - v*
 
-permissions:
-  contents: write   # required to create tags, releases
-
 jobs:
-  # ───────────────────────────────────────────────────────────────────────────
-  # VALIDATE INPUT 
-  # ───────────────────────────────────────────────────────────────────────────
-  validate-tag:
-    runs-on: ubuntu-latest
-    # Skip this job when the tag input is blank — no release
-    if: inputs.tag != ''
-    steps:
-      - name: Check tag format
-        run: |
-          TAG="${{ inputs.tag }}"
-          if [[ ! "${TAG}" =~ ^v[0-9]+\.[0-9]+(\.[0-9]+)?(-[a-zA-Z0-9._-]+)?$ ]]; then
-            echo "::error::Tag '${TAG}' is not valid. Must match vMAJOR.MINOR[.PATCH][-prerelease]"
-            exit 1
-          fi
-          echo "Tag '${TAG}' is valid."
-
-  # ───────────────────────────────────────────────────────────────────────────
-  # BUILD
-  # ───────────────────────────────────────────────────────────────────────────
   build:
-    # When no tag is provided, validate-tag is skipped (result = 'skipped'),
-    needs: validate-tag
-    if: always() && (needs.validate-tag.result == 'success' || needs.validate-tag.result == 'skipped')
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         python-version:
-#          - "3.8"
-#          - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
@@ -142,91 +99,3 @@ jobs:
           name: wheel-py-${{ matrix.os }}-${{ matrix.python-version }}
           path: dist/*.whl
           if-no-files-found: error
-
-  # ───────────────────────────────────────────────────────────────────────────
-  # PUBLISH — collect wheels, tag if needed, make the release.
-  # Skip if no tag
-  # ───────────────────────────────────────────────────────────────────────────
-  publish:
-    name: Publish GitHub release
-    needs: build
-    # Skip when tag is blank — build-only run, no release wanted.
-    if: always() && inputs.tag != '' && needs.build.result == 'success'
-    runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      TAG: ${{ inputs.tag }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v6
-        with:
-          # must fetch full history so a new tag can be created if it does not exist
-          fetch-depth: 0
-          persist-credentials: true
-
-      - name: Download all wheel artifacts
-        uses: actions/download-artifact@v7
-        with:
-          pattern: wheel-py*
-          merge-multiple: true
-          path: dist/
-
-      - name: List wheels to publish
-        run: ls -lh dist/
-
-      - name: Create git tag if it does not exist
-        run: |
-          if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "${TAG}"; then
-            echo "Tag ${TAG} already exists — skipping tag creation."
-          else
-            echo "Tag ${TAG} does not exist — creating it from HEAD."
-            git config user.name  "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git tag -a "${TAG}" -m "Release ${TAG}"
-            git push origin "${TAG}"
-            echo "Tag ${TAG} pushed."
-          fi
-
-      - name: Create or update GitHub release
-        # gh release create  → used when no release exists yet for this tag.
-        #   • Automatically uses the tag that was pushed (or the existing one).
-        #   • --generate-notes asks GitHub to auto-fill the release notes from
-        #     commits since the previous release.
-        #
-        # gh release upload --clobber  → used when a release already exists.
-        #   • --clobber deletes any asset with the same filename before
-        #     re-uploading, giving us idempotent replace semantics.
-        #   • WARNING: gh documents that if the upload fails after --clobber,
-        #     the original asset is gone. Acceptable here because we always
-        #     have the artifact zip as a fallback.
-        run: |
-          if gh release view "${TAG}" > /dev/null 2>&1; then
-            echo "Release for ${TAG} already exists — replacing assets."
-            gh release upload "${TAG}" dist/*.whl --clobber
-          else
-            echo "No release for ${TAG} yet — creating release and uploading assets."
-            gh release create "${TAG}" dist/*.whl \
-              --title "${TAG}" \
-              --generate-notes
-          fi
-
-  publish-testpypi:
-    name: Publish to TestPyPI
-    needs: [build]
-    if: inputs.publish_to_testpypi && needs.build.result == 'success'
-    runs-on: ubuntu-latest
-    environment:
-      name: release
-      url: https://test.pypi.org/p/python-lzo
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/download-artifact@v6
-        with:
-          path: dist
-      - run: |
-          mv dist/*/*.whl dist/ 2>/dev/null || true
-          find dist -mindepth 1 -type d -delete
-      - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/

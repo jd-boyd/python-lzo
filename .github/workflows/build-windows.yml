@@ -1,21 +1,12 @@
-name: Build/release wheels for Windows
+name: Build wheels for Windows
 
 on:
   workflow_dispatch:
-    inputs:
-      custom_ref:
-        description: 'custom ref/tag'
-        required: false
-      do_release:
-        description: 'Creating release from artifacts: type "y" to enable'
-        required: false
-      publish_to_testpypi:
-        description: 'Publish wheels to TestPyPI'
-        type: boolean
-        default: false
+  workflow_call:
   push:
     tags:
       - v*
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -55,56 +46,3 @@ jobs:
           path: dist\*.whl
           overwrite: true
           if-no-files-found: error
-
-  release:
-    if: ${{ github.event.inputs.do_release == 'y' && github.event.inputs.custom_ref != '' }}
-    needs: [build]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./artifacts
-          merge-multiple: true
-
-      - name: List all files
-        run: ls -R ./artifacts
-
-      - name: do release
-        run: |
-          gh release create '${{ github.event.inputs.custom_ref}}' \
-            -t '${{ github.event.inputs.custom_ref}}' \
-            --title "${{ github.event.repository.name }}-${{ github.event.inputs.custom_ref}}" \
-            --target '${{ github.ref_name }}' \
-            --latest=true \
-            --generate-notes \
-            --repo ${GITHUB_REPOSITORY}
-          gh release upload '${{ github.event.inputs.custom_ref}}' --repo ${GITHUB_REPOSITORY} --clobber \
-            ./artifacts/*
-
-  publish-testpypi:
-    name: Publish to TestPyPI
-    needs: [build]
-    if: inputs.publish_to_testpypi
-    runs-on: ubuntu-latest
-    environment:
-      name: release
-      url: https://test.pypi.org/p/python-lzo
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/download-artifact@v6
-        with:
-          path: dist
-      - run: |
-          mv dist/*/*.whl dist/ 2>/dev/null || true
-          find dist -mindepth 1 -type d -delete
-      - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
